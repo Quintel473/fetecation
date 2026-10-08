@@ -92,7 +92,7 @@ require_once __DIR__ . "/includes/header.php";
                 <p class="success-note">
                     If you don't hear from us within 24 hours, please
                     contact us directly at
-                    <a href="mailto:quintelcharles@ccagrenada.com">quintelcharles@ccagrenada.com</a>.
+                    <a href="mailto:qunitelcharles@gmail.com">qunitelcharles@gmail.com</a>.
                 </p>
 
             <?php endif; ?>
@@ -103,7 +103,7 @@ require_once __DIR__ . "/includes/header.php";
                     Back to Home
                 </a>
 
-                <a href="https://wa.me/15550000000?text=Hi%20FeteCation!%20I%20just%20submitted%20a%20booking%20(Ref%3A%20<?= urlencode($ref); ?>)"
+                <a href="https://wa.me/14734560954?text=Hi%20FeteCation!%20I%20just%20submitted%20a%20booking%20(Ref%3A%20<?= urlencode($ref); ?>)"
                    class="secondary-button"
                    target="_blank"
                    rel="noopener">
