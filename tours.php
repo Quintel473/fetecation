@@ -3,6 +3,9 @@
 $pageTitle = "Tours";
 
 require_once __DIR__ . "/includes/header.php";
+require_once __DIR__ . "/tours-data.php";
+
+$tours = fete_all_tours();
 
 ?>
 
@@ -10,13 +13,9 @@ require_once __DIR__ . "/includes/header.php";
 
     <div class="container page-hero-content">
 
-        <p class="section-label">
-            EXPLORE WITH FETECATION
-        </p>
+        <p class="section-label">EXPLORE WITH FETECATION</p>
 
-        <h1>
-            Discover the Island
-        </h1>
+        <h1>Discover the Island</h1>
 
         <p>
             Experience beautiful destinations, culture, scenery
@@ -34,13 +33,9 @@ require_once __DIR__ . "/includes/header.php";
 
         <div class="section-heading">
 
-            <p class="section-label">
-                OUR TOURS
-            </p>
+            <p class="section-label">OUR TOURS</p>
 
-            <h2>
-                Explore With Us
-            </h2>
+            <h2>Explore With Us</h2>
 
             <p>
                 Discover experiences designed to help you see,
@@ -52,141 +47,47 @@ require_once __DIR__ . "/includes/header.php";
 
         <div class="tour-grid">
 
-            <article class="tour-card">
+            <?php foreach ($tours as $slug => $tour): ?>
 
-                <div class="tour-image">
-                    <div class="tour-placeholder">
-                        🌅
-                    </div>
-                </div>
+                <a href="/fetecation/tours/<?= htmlspecialchars($slug); ?>.php"
+                   class="tour-card">
 
-                <div class="tour-content">
-
-                    <span class="tour-tag">
-                        POPULAR
-                    </span>
-
-                    <h3>
-                        Island Highlights Tour
-                    </h3>
-
-                    <p>
-                        Take in some of the island's beautiful
-                        scenery and attractions on a memorable
-                        island experience.
-                    </p>
-
-                    <div class="tour-details">
-
-                        <span>
-                            🕐 Flexible Duration
-                        </span>
-
-                        <span>
-                            🚐 Private Experience
-                        </span>
-
+                    <div class="tour-image">
+                        <div class="tour-placeholder">
+                            <?= htmlspecialchars($tour['emoji']); ?>
+                        </div>
                     </div>
 
-                    <a href="/fetecation/booking.php"
-                       class="tour-button">
-                        Book This Tour
-                    </a>
+                    <div class="tour-content">
 
-                </div>
-
-            </article>
-
-
-            <article class="tour-card">
-
-                <div class="tour-image">
-                    <div class="tour-placeholder">
-                        🌴
-                    </div>
-                </div>
-
-                <div class="tour-content">
-
-                    <span class="tour-tag">
-                        EXPERIENCE
-                    </span>
-
-                    <h3>
-                        Nature & Adventure
-                    </h3>
-
-                    <p>
-                        Discover natural beauty, scenic locations
-                        and the island's outdoor experiences.
-                    </p>
-
-                    <div class="tour-details">
-
-                        <span>
-                            🕐 Flexible Duration
+                        <span class="tour-tag">
+                            <?= htmlspecialchars($tour['tag']); ?>
                         </span>
 
-                        <span>
-                            🚐 Private Experience
+                        <h3>
+                            <?= htmlspecialchars($tour['name']); ?>
+                        </h3>
+
+                        <p>
+                            <?= htmlspecialchars($tour['tagline']); ?>
+                        </p>
+
+                        <div class="tour-details">
+
+                            <span>🕐 <?= htmlspecialchars($tour['duration']); ?></span>
+                            <span>🚐 <?= htmlspecialchars($tour['group']); ?></span>
+
+                        </div>
+
+                        <span class="tour-button">
+                            View Tour
                         </span>
 
                     </div>
 
-                    <a href="/fetecation/booking.php"
-                       class="tour-button">
-                        Book This Tour
-                    </a>
+                </a>
 
-                </div>
-
-            </article>
-
-
-            <article class="tour-card">
-
-                <div class="tour-image">
-                    <div class="tour-placeholder">
-                        🌅
-                    </div>
-                </div>
-
-                <div class="tour-content">
-
-                    <span class="tour-tag">
-                        CUSTOM
-                    </span>
-
-                    <h3>
-                        Custom Island Experience
-                    </h3>
-
-                    <p>
-                        Want something different? Talk with us about
-                        creating a trip around the places you want
-                        to experience.
-                    </p>
-
-                    <div class="tour-details">
-
-                        <span>
-                            🕐 Custom Schedule
-                        </span>
-
-                        <span>
-                            🚐 Private Experience
-                        </span>
-
-                    </div>
-
-                    <a href="/fetecation/booking.php"
-                       class="tour-button">
-                        Plan Your Tour
-                    </a>
-
-                </div>
-
-            </article>
+            <?php endforeach; ?>
 
         </div>
 
