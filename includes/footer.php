@@ -6,10 +6,12 @@
 
         <div class="footer-brand">
 
-            <img
-                src="/fetecation/images/logo.png"
-                alt="FeteCation Taxi & Tours"
-            >
+            <span class="footer-logo-circle">
+                <img
+                    src="/fetecation/images/logo.png"
+                    alt="FeteCation Taxi & Tours"
+                >
+            </span>
 
             <p>
                 Taxi & Tours made easy. Explore, ride and experience

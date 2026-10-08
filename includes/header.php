@@ -21,13 +21,20 @@ if (!isset($pageTitle)) {
 
 <header class="site-header">
 
-    <div class="container header-container">
+    <div class="header-container">
 
         <a href="/fetecation/" class="site-logo">
-            <img
-                src="/fetecation/images/logo.png"
-                alt="FeteCation Taxi & Tours"
-            >
+            <span class="site-logo-circle">
+                <img
+                    src="/fetecation/images/logo.png"
+                    alt="FeteCation Taxi & Tours"
+                >
+            </span>
+
+            <span class="site-logo-text">
+                <strong>FeteCation</strong>
+                <small>Taxi &amp; Tours</small>
+            </span>
         </a>
 
         <nav class="main-navigation">
