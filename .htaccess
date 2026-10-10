@@ -1,0 +1,94 @@
+# =========================================================
+# FETECATION TAXI & TOURS — Apache configuration
+# =========================================================
+
+# ---------------------------------------------------------
+# Custom 404 error page
+# ---------------------------------------------------------
+ErrorDocument 404 /fetecation/404.php
+
+# ---------------------------------------------------------
+# Prevent directory listing
+# ---------------------------------------------------------
+Options -Indexes
+
+# ---------------------------------------------------------
+# Block direct access to sensitive folders
+# ---------------------------------------------------------
+RedirectMatch 403 ^/fetecation/data/.*$
+RedirectMatch 403 ^/fetecation/includes/.*$
+
+# ---------------------------------------------------------
+# Security headers
+# ---------------------------------------------------------
+<IfModule mod_headers.c>
+    Header set X-Content-Type-Options "nosniff"
+    Header set X-Frame-Options "SAMEORIGIN"
+    Header set Referrer-Policy "strict-origin-when-cross-origin"
+    Header set Permissions-Policy "geolocation=(), microphone=(), camera=()"
+</IfModule>
+
+# ---------------------------------------------------------
+# Block common malicious request patterns
+# ---------------------------------------------------------
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Block PHP execution in uploads/data directories
+    RewriteRule ^data/.*\.(php|phtml|php3|php4|php5|php7|phps)$ - [F,L]
+    RewriteRule ^includes/.*\.(php|phtml|php3|php4|php5|php7|phps)$ - [F,L]
+
+    # Block common exploit probes (still logs them in error_log)
+    RewriteCond %{QUERY_STRING} (<|%3C).*script.*(>|%3E) [NC,OR]
+    RewriteCond %{QUERY_STRING} GLOBALS(=|\[|\%[0-9A-Z]{0,2}) [OR]
+    RewriteCond %{QUERY_STRING} _REQUEST(=|\[|\%[0-9A-Z]{0,2}) [OR]
+    RewriteCond %{QUERY_STRING} proc/self/environ [OR]
+    RewriteCond %{QUERY_STRING} mosConfig_[a-zA-Z_]{1,21}(=|\%3D) [OR]
+    RewriteCond %{QUERY_STRING} base64_encode.*\(.*\) [OR]
+    RewriteCond %{QUERY_STRING} (<|%3C).*iframe.*(>|%3E) [NC]
+    RewriteRule ^(.*)$ - [F,L]
+</IfModule>
+
+# ---------------------------------------------------------
+# Cache control for static assets
+# ---------------------------------------------------------
+<IfModule mod_expires.c>
+    ExpiresActive On
+
+    # Images
+    ExpiresByType image/jpeg                "access plus 1 month"
+    ExpiresByType image/png                 "access plus 1 month"
+    ExpiresByType image/gif                 "access plus 1 month"
+    ExpiresByType image/svg+xml             "access plus 1 month"
+    ExpiresByType image/webp                "access plus 1 month"
+    ExpiresByType image/x-icon              "access plus 1 month"
+
+    # CSS / JS
+    ExpiresByType text/css                  "access plus 1 week"
+    ExpiresByType application/javascript    "access plus 1 week"
+    ExpiresByType text/javascript           "access plus 1 week"
+
+    # Fonts
+    ExpiresByType font/woff                 "access plus 1 month"
+    ExpiresByType font/woff2                "access plus 1 month"
+    ExpiresByType application/font-woff     "access plus 1 month"
+
+    # HTML — short cache (or none)
+    ExpiresByType text/html                 "access plus 0 seconds"
+</IfModule>
+
+# ---------------------------------------------------------
+# Compression (gzip) for text-based assets
+# ---------------------------------------------------------
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/plain text/xml
+    AddOutputFilterByType DEFLATE text/css
+    AddOutputFilterByType DEFLATE application/javascript text/javascript
+    AddOutputFilterByType DEFLATE application/json
+    AddOutputFilterByType DEFLATE image/svg+xml
+</IfModule>
+
+# ---------------------------------------------------------
+# UTF-8 default charset
+# ---------------------------------------------------------
+AddDefaultCharset UTF-8

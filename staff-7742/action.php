@@ -1,41 +1,27 @@
 <?php
 require_once __DIR__ . '/auth.php';
+require_once __DIR__ . '/../includes/database.php';
+require_once __DIR__ . '/../includes/mailer.php';
+require_once __DIR__ . '/../includes/paypal.php';
 
 /* ---------------------------------------------------------
    Parse + validate
    --------------------------------------------------------- */
 $type   = $_GET['type']   ?? '';
 $action = $_GET['action'] ?? '';
-$file   = $_GET['file']   ?? '';
+$id     = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 
 if (!in_array($type, ['booking', 'message'], true)) {
     header('Location: /fetecation/staff-7742/index.php');
     exit;
 }
 
-if (!in_array($action, ['confirm', 'cancel', 'delete'], true)) {
+if (!in_array($action, ['confirm', 'cancel', 'delete', 'send-payment'], true)) {
     header('Location: /fetecation/staff-7742/index.php');
     exit;
 }
 
-/* Only allow safe filenames */
-if ($file === '' || strpos($file, '/') !== false || strpos($file, '\\') !== false || strpos($file, '..') !== false) {
-    header('Location: /fetecation/staff-7742/index.php');
-    exit;
-}
-
-if (!preg_match('/^[A-Za-z0-9_\-\.]+\.json$/', $file)) {
-    header('Location: /fetecation/staff-7742/index.php');
-    exit;
-}
-
-/* ---------------------------------------------------------
-   Locate the file
-   --------------------------------------------------------- */
-$dir = $type === 'booking' ? ADMIN_BOOKINGS_DIR : ADMIN_MESSAGES_DIR;
-$path = $dir . '/' . $file;
-
-if (!is_file($path)) {
+if ($id < 1) {
     header('Location: /fetecation/staff-7742/index.php');
     exit;
 }
@@ -43,22 +29,62 @@ if (!is_file($path)) {
 /* ---------------------------------------------------------
    Perform action
    --------------------------------------------------------- */
-if ($action === 'delete') {
+try {
 
-    @unlink($path);
+    if ($type === 'booking') {
 
-} else {
+        if ($action === 'delete') {
 
-    $data = json_decode(file_get_contents($path), true);
-    if (!is_array($data)) {
-        header('Location: /fetecation/staff-7742/index.php');
-        exit;
+            $stmt = $pdo->prepare('DELETE FROM bookings WHERE BookingID = ?');
+            $stmt->execute([$id]);
+
+        } else {
+
+            /* Load the booking first so we can email the customer */
+            $lookup = $pdo->prepare('SELECT * FROM bookings WHERE BookingID = ? LIMIT 1');
+            $lookup->execute([$id]);
+            $booking = $lookup->fetch();
+
+            if (!$booking) {
+                header('Location: /fetecation/staff-7742/index.php');
+                exit;
+            }
+
+            /* ---- Send payment link ---- */
+            if ($action === 'send-payment') {
+                send_payment_link_email($booking);
+                header('Location: /fetecation/staff-7742/index.php');
+                exit;
+            }
+
+            /* ---- Confirm / Cancel ---- */
+            $status = $action === 'confirm' ? 'Confirmed' : 'Cancelled';
+
+            $stmt = $pdo->prepare(
+                'UPDATE bookings SET Status = ? WHERE BookingID = ?'
+            );
+            $stmt->execute([$status, $id]);
+
+            /* Send the appropriate customer email */
+            if ($action === 'confirm') {
+                send_booking_confirmed_email($booking);
+            } else {
+                send_booking_cancelled_email($booking);
+            }
+        }
+
+    } else { /* message */
+
+        if ($action === 'delete') {
+            $stmt = $pdo->prepare('DELETE FROM messages WHERE MessageID = ?');
+            $stmt->execute([$id]);
+        }
+        /* Messages only support delete currently */
+
     }
 
-    $data['status'] = $action === 'confirm' ? 'confirmed' : 'cancelled';
-    $data['status_updated_at'] = date('Y-m-d H:i:s');
-
-    @file_put_contents($path, json_encode($data, JSON_PRETTY_PRINT));
+} catch (Throwable $e) {
+    error_log('admin action failed: ' . $e->getMessage());
 }
 
 header('Location: /fetecation/staff-7742/index.php');

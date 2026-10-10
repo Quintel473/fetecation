@@ -2,16 +2,22 @@
 
 $pageTitle = "Booking Received";
 
-require_once __DIR__ . "/tours-data.php";
+require_once __DIR__ . "/includes/database.php";
+require_once __DIR__ . "/includes/paypal.php";
 
 $ref = $_GET['ref'] ?? '';
 
-/* Try to find the booking file so we can show details */
+/* Look up the booking in MySQL by reference */
 $booking = null;
 if ($ref !== '' && ctype_alnum($ref)) {
-    $files = glob(__DIR__ . '/data/bookings/*_' . $ref . '.json');
-    if (!empty($files)) {
-        $booking = json_decode(file_get_contents($files[0]), true);
+    try {
+        $stmt = $pdo->prepare(
+            'SELECT * FROM bookings WHERE Reference = ? LIMIT 1'
+        );
+        $stmt->execute([$ref]);
+        $booking = $stmt->fetch();
+    } catch (Throwable $e) {
+        error_log('booking-success lookup failed: ' . $e->getMessage());
     }
 }
 
@@ -24,7 +30,7 @@ require_once __DIR__ . "/includes/header.php";
 
         <p class="section-label">BOOKING RECEIVED</p>
 
-        <h1>Thank You<?= $booking ? ', ' . htmlspecialchars($booking['name']) : ''; ?>!</h1>
+        <h1>Thank You<?= $booking ? ', ' . htmlspecialchars($booking['Name']) : ''; ?>!</h1>
 
         <p>
             We've received your booking request and sent a confirmation
@@ -51,32 +57,40 @@ require_once __DIR__ . "/includes/header.php";
 
             <?php if ($booking): ?>
 
+                <?php
+                    $tourLabel = ($booking['TourSlug'] === 'taxi' || empty($booking['TourSlug']))
+                                 ? 'Taxi Service'
+                                 : ($booking['TourSlug'] ?: 'Tour');
+
+                    $paymentOption = $booking['PaymentOption'] ?? 'on-day';
+                ?>
+
                 <ul class="success-details">
 
                     <li>
                         <span>Reference</span>
-                        <strong><?= htmlspecialchars($booking['reference']); ?></strong>
+                        <strong><?= htmlspecialchars($booking['Reference']); ?></strong>
                     </li>
 
                     <li>
                         <span>Experience</span>
-                        <strong><?= htmlspecialchars($booking['tour']); ?></strong>
+                        <strong><?= htmlspecialchars($tourLabel); ?></strong>
                     </li>
 
                     <li>
                         <span>Date</span>
-                        <strong><?= htmlspecialchars($booking['date']); ?></strong>
+                        <strong><?= htmlspecialchars($booking['BookingDate']); ?></strong>
                     </li>
 
                     <li>
                         <span>Guests</span>
-                        <strong><?= htmlspecialchars($booking['guests']); ?></strong>
+                        <strong><?= htmlspecialchars($booking['NumberOfPassengers']); ?></strong>
                     </li>
 
-                    <?php if (!empty($booking['pickup'])): ?>
+                    <?php if (!empty($booking['PickupLocation'])): ?>
                         <li>
                             <span>Pickup</span>
-                            <strong><?= htmlspecialchars($booking['pickup']); ?></strong>
+                            <strong><?= htmlspecialchars($booking['PickupLocation']); ?></strong>
                         </li>
                     <?php endif; ?>
 
@@ -86,6 +100,45 @@ require_once __DIR__ . "/includes/header.php";
                     Keep your reference number handy — it helps us find
                     your booking quickly if you contact us.
                 </p>
+
+
+                <!-- ============ PAYMENT CTA ============ -->
+                <?php if ($paymentOption === 'full' || $paymentOption === 'deposit'): ?>
+
+                    <div class="payment-cta">
+
+                        <?php if ($paymentOption === 'deposit'): ?>
+                            <p class="payment-note">
+                                Your <strong><?= DEPOSIT_PERCENT; ?>% deposit</strong>
+                                secures your spot. The rest is due on the day of your tour.
+                            </p>
+                        <?php else: ?>
+                            <p class="payment-note">
+                                Complete your payment now to lock in your booking.
+                            </p>
+                        <?php endif; ?>
+
+                        <a href="/fetecation/payment-start.php?ref=<?= urlencode($booking['Reference']); ?>"
+                           class="primary-button payment-button">
+                            💳 Pay Now
+                        </a>
+
+                        <p class="payment-secure">
+                            🔒 Secure payment powered by PayPal
+                        </p>
+
+                    </div>
+
+                <?php else: ?>
+
+                    <div class="payment-cta payment-cta-plain">
+                        <p class="payment-note">
+                            <strong>Payment on the day.</strong>
+                            No online payment needed — pay your driver or guide directly.
+                        </p>
+                    </div>
+
+                <?php endif; ?>
 
             <?php else: ?>
 

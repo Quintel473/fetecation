@@ -26,10 +26,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-if (isset($_GET['verified'])) $notice = 'Your email has been confirmed. You can sign in now.';
-if (isset($_GET['reset']))    $notice = 'Password updated. Sign in with your new password.';
-if (isset($_GET['loggedout']))$notice = 'You have been signed out.';
-if (isset($_GET['registered']))$notice = 'Account created. Check your email to confirm, then sign in.';
+if (isset($_GET['verified']))   $notice = 'Your email has been confirmed. You can sign in now.';
+if (isset($_GET['reset']))      $notice = 'Password updated. Sign in with your new password.';
+if (isset($_GET['loggedout']))  $notice = 'You have been signed out.';
+if (isset($_GET['registered'])) $notice = 'Account created. Check your email to confirm, then sign in.';
+if (isset($_GET['deleted']))    $notice = 'Your account has been deleted. We\'re sorry to see you go.';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -141,6 +142,13 @@ if (isset($_GET['registered']))$notice = 'Account created. Check your email to c
                                 placeholder="Your password"
                             >
                         </div>
+                    </div>
+
+                    <div class="acct-field acct-remember-field">
+                        <label class="acct-remember-label">
+                            <input type="checkbox" name="remember" value="1">
+                            <span>Remember me for 30 days</span>
+                        </label>
                     </div>
 
                     <button type="submit" class="acct-button">

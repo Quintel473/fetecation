@@ -772,9 +772,10 @@ img { display: block; max-width: 100%; }
     text-transform: uppercase;
 }
 
+.status-pending,
 .status-new {
-    background: #eaf4ff;
-    color: #1e60a8;
+    background: #fff6e4;
+    color: #8a5c10;
 }
 
 .status-confirmed {
@@ -785,6 +786,11 @@ img { display: block; max-width: 100%; }
 .status-cancelled {
     background: #fbeceb;
     color: #a03027;
+}
+
+.status-completed {
+    background: #eef2ff;
+    color: #3b47a8;
 }
 
 

@@ -3,6 +3,7 @@
 $pageTitle = "Contact Us";
 
 require_once __DIR__ . "/includes/mailer.php";
+require_once __DIR__ . "/includes/database.php";
 
 /* ---------------------------------------------------------
    Handle form submission
@@ -38,7 +39,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'ip'           => $_SERVER['REMOTE_ADDR'] ?? '',
         ];
 
-        /* Save to disk */
+        /* Save to MySQL */
+        try {
+            $stmt = $pdo->prepare(
+                'INSERT INTO messages
+                    (Name, Email, Phone, Subject, Message, Status, CreatedAt, IP)
+                 VALUES
+                    (:name, :email, :phone, :subject, :msg, :status, :created, :ip)'
+            );
+
+            $stmt->execute([
+                ':name'    => $name,
+                ':email'   => $email,
+                ':phone'   => $phone,
+                ':subject' => $subject,
+                ':msg'     => $message,
+                ':status'  => 'Unread',
+                ':created' => $submittedAt,
+                ':ip'      => $_SERVER['REMOTE_ADDR'] ?? null,
+            ]);
+
+        } catch (Throwable $e) {
+            error_log('message insert failed: ' . $e->getMessage());
+        }
+
+        /* Keep JSON backup */
         $dir = __DIR__ . '/data/messages';
         if (!is_dir($dir)) {
             @mkdir($dir, 0775, true);
@@ -293,6 +318,30 @@ require_once __DIR__ . "/includes/header.php";
                 </button>
 
             </form>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ============ GOOGLE MAP ============ -->
+<section class="contact-map-section">
+
+    <div class="container">
+
+        <div class="contact-map">
+
+            <iframe
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d499050.5732002024!2d-61.920646549878185!3d12.259604939929211!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8c381789f4877bd1%3A0x36d8c7015a1f4f8e!2sGrenada!5e0!3m2!1sen!2s!4v1791650126440!5m2!1sen!2s"
+                width="100%"
+                height="420"
+                style="border:0;"
+                allowfullscreen=""
+                loading="lazy"
+                referrerpolicy="strict-origin-when-cross-origin">
+            </iframe>
 
         </div>
 

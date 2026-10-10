@@ -4,6 +4,9 @@ $pageTitle = "Book Your Ride";
 
 require_once __DIR__ . "/tours-data.php";
 require_once __DIR__ . "/includes/mailer.php";
+require_once __DIR__ . "/includes/customer-auth.php";
+require_once __DIR__ . "/includes/database.php";
+require_once __DIR__ . "/includes/paypal.php";
 
 /* ---------------------------------------------------------
    Handle form submission
@@ -13,14 +16,15 @@ $errors = [];
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // ---- Collect + trim inputs ----
-    $name    = trim($_POST['name']    ?? '');
-    $email   = trim($_POST['email']   ?? '');
-    $phone   = trim($_POST['phone']   ?? '');
-    $date    = trim($_POST['date']    ?? '');
-    $guests  = trim($_POST['guests']  ?? '');
-    $pickup  = trim($_POST['pickup']  ?? '');
-    $notes   = trim($_POST['notes']   ?? '');
-    $tour    = trim($_POST['tour']    ?? 'taxi');
+    $name          = trim($_POST['name']            ?? '');
+    $email         = trim($_POST['email']           ?? '');
+    $phone         = trim($_POST['phone']           ?? '');
+    $date          = trim($_POST['date']            ?? '');
+    $guests        = trim($_POST['guests']          ?? '');
+    $pickup        = trim($_POST['pickup']          ?? '');
+    $notes         = trim($_POST['notes']           ?? '');
+    $tour          = trim($_POST['tour']            ?? 'taxi');
+    $paymentOption = trim($_POST['payment_option']  ?? 'on-day');
 
     // ---- Validate ----
     if ($name === '')    $errors[] = 'Please enter your name.';
@@ -30,11 +34,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($date === '')    $errors[] = 'Please choose a date.';
     if ($guests === '' || (int)$guests < 1)
                          $errors[] = 'Please choose how many guests.';
+    if (!in_array($paymentOption, ['full', 'deposit', 'on-day'], true))
+                         $paymentOption = 'on-day';
+    if (empty($_POST['agree']))
+                         $errors[] = 'Please agree to the Terms of Service and Privacy Policy.';
 
     // ---- If valid: save + email + redirect ----
     if (empty($errors)) {
 
-        $reference   = strtoupper(bin2hex(random_bytes(3))); // e.g. A3F9C1
+        $reference   = strtoupper(bin2hex(random_bytes(3)));
         $submittedAt = date('Y-m-d H:i:s');
 
         // Friendly tour name
@@ -44,36 +52,97 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if ($t) $tourName = $t['name'];
         }
 
+        // Link to logged-in customer, if any
+        $customerId = null;
+        if (customer_is_logged_in()) {
+            $current = customer_current();
+            if ($current) {
+                $customerId = (int)$current['CustomerID'];
+            }
+        }
+
         $booking = [
-            'reference'    => $reference,
-            'tour'         => $tourName,
-            'tour_slug'    => $tour,
-            'name'         => $name,
-            'email'        => $email,
-            'phone'        => $phone,
-            'date'         => $date,
-            'guests'       => $guests,
-            'pickup'       => $pickup,
-            'notes'        => $notes,
-            'submitted_at' => $submittedAt,
-            'ip'           => $_SERVER['REMOTE_ADDR'] ?? '',
+            'reference'      => $reference,
+            'customer_id'    => $customerId,
+            'tour'           => $tourName,
+            'tour_slug'      => $tour,
+            'name'           => $name,
+            'email'          => $email,
+            'phone'          => $phone,
+            'date'           => $date,
+            'guests'         => $guests,
+            'pickup'         => $pickup,
+            'notes'          => $notes,
+            'payment_option' => $paymentOption,
+            'submitted_at'   => $submittedAt,
+            'ip'             => $_SERVER['REMOTE_ADDR'] ?? '',
         ];
 
-        // ---- Save to disk ----
-        $dir = __DIR__ . '/data/bookings';
-        if (!is_dir($dir)) {
-            @mkdir($dir, 0775, true);
+        // ---- Save to MySQL ----
+        try {
+            $bookingType = ($tour === 'taxi') ? 'Taxi' : 'Tour';
+
+            /* We use TourSlug as the identifier — no TourID lookup needed */
+            $tourId = null;
+
+            /* PaymentOption column — add this to the INSERT */
+            $stmt = $pdo->prepare(
+                'INSERT INTO bookings
+                    (Reference, Name, Email, Phone,
+                     CustomerID, BookingType, TourID, TourSlug,
+                     PickupLocation, BookingDate, NumberOfPassengers,
+                     SpecialRequests, Notes, PaymentOption, Status, SubmittedAt, IP)
+                 VALUES
+                    (:ref, :name, :email, :phone,
+                     :cid, :type, :tid, :slug,
+                     :pickup, :bdate, :guests,
+                     :notes, :notes2, :payopt, :status, :submitted, :ip)'
+            );
+
+            $stmt->execute([
+                ':ref'       => $reference,
+                ':name'      => $name,
+                ':email'     => $email,
+                ':phone'     => $phone,
+                ':cid'       => $customerId,
+                ':type'      => $bookingType,
+                ':tid'       => $tourId,
+                ':slug'      => $tour,
+                ':pickup'    => $pickup,
+                ':bdate'     => $date,
+                ':guests'    => (int)$guests,
+                ':notes'     => $notes,
+                ':notes2'    => $notes,
+                ':payopt'    => $paymentOption,
+                ':status'    => 'Pending',
+                ':submitted' => $submittedAt,
+                ':ip'        => $_SERVER['REMOTE_ADDR'] ?? null,
+            ]);
+
+        } catch (Throwable $e) {
+            error_log('booking insert failed: ' . $e->getMessage());
+            $errors[] = 'Could not save your booking. Please try again.';
         }
-        $filename = $dir . '/' . date('Y-m-d_His') . '_' . $reference . '.json';
-        @file_put_contents($filename, json_encode($booking, JSON_PRETTY_PRINT));
 
-        // ---- Send emails ----
-        send_booking_notification($booking);
-        send_customer_confirmation($booking);
+        // ---- Backup to disk ----
+        if (empty($errors)) {
+            $dir = __DIR__ . '/data/bookings';
+            if (!is_dir($dir)) {
+                @mkdir($dir, 0775, true);
+            }
+            $filename = $dir . '/' . date('Y-m-d_His') . '_' . $reference . '.json';
+            @file_put_contents($filename, json_encode($booking, JSON_PRETTY_PRINT));
+        }
 
-        // ---- Redirect (POST → GET pattern) ----
-        header('Location: /fetecation/booking-success.php?ref=' . urlencode($reference));
-        exit;
+        if (empty($errors)) {
+            // ---- Send emails ----
+            send_booking_notification($booking);
+            send_customer_confirmation($booking);
+
+            // ---- Redirect (POST → GET pattern) ----
+            header('Location: /fetecation/booking-success.php?ref=' . urlencode($reference));
+            exit;
+        }
     }
 }
 
@@ -81,6 +150,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
    Preselect tour from query string (?tour=...)
    --------------------------------------------------------- */
 $selectedTour = isset($_GET['tour']) ? htmlspecialchars($_GET['tour']) : '';
+
+/* ---------------------------------------------------------
+   Prefill from logged-in customer, if applicable
+   --------------------------------------------------------- */
+$prefillName  = $_POST['name']  ?? '';
+$prefillEmail = $_POST['email'] ?? '';
+$prefillPhone = $_POST['phone'] ?? '';
+
+if (customer_is_logged_in() && empty($_POST)) {
+    $me = customer_current();
+    if ($me) {
+        $prefillName  = $prefillName  ?: trim(($me['FirstName'] ?? '') . ' ' . ($me['LastName'] ?? ''));
+        $prefillEmail = $prefillEmail ?: ($me['Email'] ?? '');
+        $prefillPhone = $prefillPhone ?: ($me['Phone'] ?? '');
+    }
+}
 
 require_once __DIR__ . "/includes/header.php";
 
@@ -117,6 +202,18 @@ require_once __DIR__ . "/includes/header.php";
                 </p>
             </div>
 
+            <?php if (!customer_is_logged_in()): ?>
+                <div class="booking-note">
+                    <strong>Already have an account?</strong>
+                    <p>
+                        <a href="/fetecation/login.php" style="color:var(--fete-orange-dark);font-weight:700;">
+                            Sign in
+                        </a>
+                        to pre-fill your details and keep track of your bookings.
+                    </p>
+                </div>
+            <?php endif; ?>
+
         </div>
 
 
@@ -144,7 +241,7 @@ require_once __DIR__ . "/includes/header.php";
                             id="name"
                             name="name"
                             required
-                            value="<?= htmlspecialchars($_POST['name'] ?? ''); ?>"
+                            value="<?= htmlspecialchars($prefillName); ?>"
                         >
                     </div>
 
@@ -155,7 +252,7 @@ require_once __DIR__ . "/includes/header.php";
                             id="email"
                             name="email"
                             required
-                            value="<?= htmlspecialchars($_POST['email'] ?? ''); ?>"
+                            value="<?= htmlspecialchars($prefillEmail); ?>"
                         >
                     </div>
 
@@ -170,7 +267,7 @@ require_once __DIR__ . "/includes/header.php";
                             id="phone"
                             name="phone"
                             required
-                            value="<?= htmlspecialchars($_POST['phone'] ?? ''); ?>"
+                            value="<?= htmlspecialchars($prefillPhone); ?>"
                         >
                     </div>
 
@@ -243,6 +340,33 @@ require_once __DIR__ . "/includes/header.php";
                         rows="4"
                         placeholder="Flight number, special requests, etc."
                     ><?= htmlspecialchars($_POST['notes'] ?? ''); ?></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="payment_option">Payment option *</label>
+                    <select id="payment_option" name="payment_option" required>
+                        <option value="full" <?= ($_POST['payment_option'] ?? '') === 'full' ? 'selected' : ''; ?>>
+                            Pay in full now
+                        </option>
+                        <option value="deposit" <?= ($_POST['payment_option'] ?? '') === 'deposit' ? 'selected' : ''; ?>>
+                            Pay <?= DEPOSIT_PERCENT; ?>% deposit now, rest on the day
+                        </option>
+                        <option value="on-day" <?= ($_POST['payment_option'] ?? 'on-day') === 'on-day' ? 'selected' : ''; ?>>
+                            Pay on the day
+                        </option>
+                    </select>
+                </div>
+
+                <div class="form-group form-group-checkbox">
+                    <label class="checkbox-label">
+                        <input type="checkbox" name="agree" required>
+                        <span>
+                            I agree to the
+                            <a href="/fetecation/terms.php" target="_blank">Terms of Service</a>
+                            and
+                            <a href="/fetecation/privacy.php" target="_blank">Privacy Policy</a>.
+                        </span>
+                    </label>
                 </div>
 
                 <button type="submit" class="primary-button">

@@ -2,6 +2,7 @@
 $pageTitle = "My Account";
 
 require_once __DIR__ . '/../includes/customer-auth.php';
+require_once __DIR__ . '/../includes/database.php';
 
 /* Must be logged in */
 if (!customer_is_logged_in()) {
@@ -18,33 +19,25 @@ if (!$customer) {
 }
 
 /* ---------------------------------------------------------
-   Load this customer's bookings
-   Matches by email, since bookings are currently stored as
-   JSON files with an email field.
+   Load this customer's bookings from MySQL
+   Match by CustomerID OR Email (for older anonymous bookings)
    --------------------------------------------------------- */
 $myBookings = [];
 
-$bookingDir = __DIR__ . '/../data/bookings';
+try {
+    $stmt = $pdo->prepare(
+        'SELECT * FROM bookings
+         WHERE CustomerID = :cid OR Email = :email
+         ORDER BY SubmittedAt DESC'
+    );
+    $stmt->execute([
+        ':cid'   => (int)$customer['CustomerID'],
+        ':email' => $customer['Email'],
+    ]);
+    $myBookings = $stmt->fetchAll();
 
-if (is_dir($bookingDir)) {
-
-    $email = strtolower($customer['Email']);
-
-    foreach (glob($bookingDir . '/*.json') as $file) {
-        $data = json_decode(file_get_contents($file), true);
-        if (!is_array($data)) continue;
-
-        $bookingEmail = strtolower($data['email'] ?? '');
-
-        if ($bookingEmail === $email) {
-            $myBookings[] = $data;
-        }
-    }
-
-    /* Newest first */
-    usort($myBookings, function ($a, $b) {
-        return strcmp($b['submitted_at'] ?? '', $a['submitted_at'] ?? '');
-    });
+} catch (Throwable $e) {
+    error_log('account bookings load failed: ' . $e->getMessage());
 }
 
 /* Split into upcoming vs past */
@@ -53,7 +46,7 @@ $upcoming = [];
 $past     = [];
 
 foreach ($myBookings as $b) {
-    $date = $b['date'] ?? '';
+    $date = $b['BookingDate'] ?? '';
     if ($date !== '' && $date >= $today) {
         $upcoming[] = $b;
     } else {
@@ -184,40 +177,47 @@ require_once __DIR__ . '/../includes/header.php';
                         <div class="account-booking-list">
 
                             <?php foreach ($upcoming as $b): ?>
+                                <?php
+                                    $status       = strtolower($b['Status'] ?? 'pending');
+                                    $tourLabel    = ($b['TourSlug'] === 'taxi' || empty($b['TourSlug']))
+                                                    ? 'Taxi Service'
+                                                    : ($b['TourSlug'] ?: 'Tour');
+                                    $statusClass  = 'status-' . $status;
+                                ?>
 
                                 <article class="account-booking">
 
                                     <div class="account-booking-head">
                                         <span class="account-booking-ref">
-                                            <?= htmlspecialchars($b['reference'] ?? '—'); ?>
+                                            <?= htmlspecialchars($b['Reference'] ?? '—'); ?>
                                         </span>
-                                        <span class="account-booking-status status-pending">
-                                            <?= htmlspecialchars(ucfirst($b['status'] ?? 'pending')); ?>
+                                        <span class="account-booking-status <?= htmlspecialchars($statusClass); ?>">
+                                            <?= htmlspecialchars(ucfirst($status)); ?>
                                         </span>
                                     </div>
 
-                                    <h3><?= htmlspecialchars($b['tour'] ?? 'Taxi Service'); ?></h3>
+                                    <h3><?= htmlspecialchars($tourLabel); ?></h3>
 
                                     <dl class="account-booking-meta">
                                         <div>
                                             <dt>Date</dt>
-                                            <dd><?= htmlspecialchars($b['date'] ?? '—'); ?></dd>
+                                            <dd><?= htmlspecialchars($b['BookingDate'] ?? '—'); ?></dd>
                                         </div>
                                         <div>
                                             <dt>Guests</dt>
-                                            <dd><?= htmlspecialchars($b['guests'] ?? '—'); ?></dd>
+                                            <dd><?= htmlspecialchars($b['NumberOfPassengers'] ?? '—'); ?></dd>
                                         </div>
-                                        <?php if (!empty($b['pickup'])): ?>
+                                        <?php if (!empty($b['PickupLocation'])): ?>
                                             <div>
                                                 <dt>Pickup</dt>
-                                                <dd><?= htmlspecialchars($b['pickup']); ?></dd>
+                                                <dd><?= htmlspecialchars($b['PickupLocation']); ?></dd>
                                             </div>
                                         <?php endif; ?>
                                     </dl>
 
-                                    <?php if (!empty($b['notes'])): ?>
+                                    <?php if (!empty($b['Notes'])): ?>
                                         <p class="account-booking-notes">
-                                            <?= htmlspecialchars($b['notes']); ?>
+                                            <?= htmlspecialchars($b['Notes']); ?>
                                         </p>
                                     <?php endif; ?>
 
@@ -244,18 +244,23 @@ require_once __DIR__ . '/../includes/header.php';
                         <div class="account-booking-list account-booking-list-compact">
 
                             <?php foreach ($past as $b): ?>
+                                <?php
+                                    $tourLabel = ($b['TourSlug'] === 'taxi' || empty($b['TourSlug']))
+                                                 ? 'Taxi Service'
+                                                 : ($b['TourSlug'] ?: 'Tour');
+                                ?>
 
                                 <article class="account-booking account-booking-compact">
 
                                     <div>
-                                        <strong><?= htmlspecialchars($b['tour'] ?? 'Taxi Service'); ?></strong>
+                                        <strong><?= htmlspecialchars($tourLabel); ?></strong>
                                         <span class="account-booking-meta-inline">
-                                            <?= htmlspecialchars($b['date'] ?? '—'); ?>
+                                            <?= htmlspecialchars($b['BookingDate'] ?? '—'); ?>
                                         </span>
                                     </div>
 
                                     <span class="account-booking-ref">
-                                        <?= htmlspecialchars($b['reference'] ?? ''); ?>
+                                        <?= htmlspecialchars($b['Reference'] ?? ''); ?>
                                     </span>
 
                                 </article>

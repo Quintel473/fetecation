@@ -201,3 +201,145 @@ function send_admin_new_customer_notification(array $customer): bool
         return false;
     }
 }
+
+/* =========================================================
+   BOOKING STATUS EMAILS (sent by admin action)
+   ========================================================= */
+
+/**
+ * Notify the customer that their booking has been confirmed.
+ */
+function send_booking_confirmed_email(array $booking): bool
+{
+    try {
+        $mail = fete_mailer();
+        $mail->addAddress($booking['Email'], $booking['Name']);
+        $mail->addReplyTo(FETE_SMTP_TO, 'FeteCation Taxi & Tours');
+
+        $tourLabel = ($booking['TourSlug'] === 'taxi' || empty($booking['TourSlug']))
+                     ? 'Taxi Service'
+                     : ($booking['TourSlug'] ?: 'Tour');
+
+        $mail->Subject = '✅ Your booking is confirmed — ' . $booking['Reference'];
+
+        $body =
+              "Hi {$booking['Name']},\n\n"
+            . "Great news — your booking is confirmed!\n\n"
+            . "Here are the final details:\n\n"
+            . "Reference:    {$booking['Reference']}\n"
+            . "Experience:   {$tourLabel}\n"
+            . "Date:         {$booking['BookingDate']}\n"
+            . "Guests:       {$booking['NumberOfPassengers']}\n";
+
+        if (!empty($booking['PickupLocation'])) {
+            $body .= "Pickup:       {$booking['PickupLocation']}\n";
+        }
+
+        if (!empty($booking['Notes'])) {
+            $body .= "Notes:        {$booking['Notes']}\n";
+        }
+
+        $body .=
+              "\n"
+            . "We'll be in touch the day before with any final reminders.\n\n"
+            . "If anything has changed, just reply to this email or message us on WhatsApp:\n"
+            . "https://wa.me/14734560954\n\n"
+            . "Looking forward to seeing you!\n"
+            . "The FeteCation Team\n";
+
+        $mail->Body = $body;
+
+        $mail->send();
+        return true;
+
+    } catch (Throwable $e) {
+        error_log('Booking confirmed email failed: ' . $e->getMessage());
+        return false;
+    }
+}
+
+
+/**
+ * Notify the customer that their booking has been cancelled.
+ */
+function send_booking_cancelled_email(array $booking): bool
+{
+    try {
+        $mail = fete_mailer();
+        $mail->addAddress($booking['Email'], $booking['Name']);
+        $mail->addReplyTo(FETE_SMTP_TO, 'FeteCation Taxi & Tours');
+
+        $tourLabel = ($booking['TourSlug'] === 'taxi' || empty($booking['TourSlug']))
+                     ? 'Taxi Service'
+                     : ($booking['TourSlug'] ?: 'Tour');
+
+        $mail->Subject = 'Your booking was cancelled — ' . $booking['Reference'];
+
+        $mail->Body =
+              "Hi {$booking['Name']},\n\n"
+            . "We're sorry, but your booking has been cancelled.\n\n"
+            . "Booking details:\n\n"
+            . "Reference:    {$booking['Reference']}\n"
+            . "Experience:   {$tourLabel}\n"
+            . "Date:         {$booking['BookingDate']}\n\n"
+            . "If this is unexpected, or you'd like to rebook,\n"
+            . "please reach out to us:\n\n"
+            . "Phone/WhatsApp: +1 (473) 456-0954\n"
+            . "Email:          qunitelcharles@gmail.com\n\n"
+            . "We'd love another chance to make it right.\n\n"
+            . "— The FeteCation Team\n";
+
+        $mail->send();
+        return true;
+
+    } catch (Throwable $e) {
+        error_log('Booking cancelled email failed: ' . $e->getMessage());
+        return false;
+    }
+}
+
+/* =========================================================
+   PAYMENT EMAILS
+   ========================================================= */
+
+/**
+ * Email the customer a PayPal payment link.
+ */
+function send_payment_link_email(array $booking): bool
+{
+    try {
+        $mail = fete_mailer();
+        $mail->addAddress($booking['Email'], $booking['Name']);
+        $mail->addReplyTo(FETE_SMTP_TO, 'FeteCation Taxi & Tours');
+
+        $payUrl = 'http://localhost/fetecation/payment-start.php?ref=' . urlencode($booking['Reference']);
+
+        $tourLabel = ($booking['TourSlug'] === 'taxi' || empty($booking['TourSlug']))
+                     ? 'Taxi Service'
+                     : ($booking['TourSlug'] ?: 'Tour');
+
+        $mail->Subject = '💳 Complete your FeteCation payment — ' . $booking['Reference'];
+
+        $mail->Body =
+              "Hi {$booking['Name']},\n\n"
+            . "Thanks for booking with FeteCation!\n\n"
+            . "Here's a secure link to complete your payment:\n\n"
+            . $payUrl . "\n\n"
+            . "Booking details:\n\n"
+            . "Reference:    {$booking['Reference']}\n"
+            . "Experience:   {$tourLabel}\n"
+            . "Date:         {$booking['BookingDate']}\n"
+            . "Guests:       {$booking['NumberOfPassengers']}\n\n"
+            . "Payment is secured by PayPal. You can pay with a card or PayPal balance.\n\n"
+            . "If you have any questions, just reply to this email.\n\n"
+            . "See you soon,\n"
+            . "The FeteCation Team\n";
+
+        $mail->send();
+        return true;
+
+    } catch (Throwable $e) {
+        error_log('Payment link email failed: ' . $e->getMessage());
+        return false;
+    }
+}

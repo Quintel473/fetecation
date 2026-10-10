@@ -1,45 +1,49 @@
 <?php
 require_once __DIR__ . '/auth.php';
+require_once __DIR__ . '/../includes/database.php';
 
 /* ---------------------------------------------------------
-   Load all bookings
+   Load bookings from MySQL
    --------------------------------------------------------- */
-function admin_load_json_files(string $dir): array
-{
-    $items = [];
-    if (!is_dir($dir)) return $items;
-
-    foreach (glob($dir . '/*.json') as $file) {
-        $data = json_decode(file_get_contents($file), true);
-        if (is_array($data)) {
-            $data['_file'] = basename($file);
-            $items[] = $data;
-        }
-    }
-
-    /* Newest first */
-    usort($items, function ($a, $b) {
-        return strcmp($b['submitted_at'] ?? '', $a['submitted_at'] ?? '');
-    });
-
-    return $items;
+$bookings = [];
+try {
+    $stmt = $pdo->query(
+        'SELECT * FROM bookings
+         ORDER BY SubmittedAt DESC'
+    );
+    $bookings = $stmt->fetchAll();
+} catch (Throwable $e) {
+    error_log('admin load bookings failed: ' . $e->getMessage());
 }
 
-$bookings  = admin_load_json_files(ADMIN_BOOKINGS_DIR);
-$messages  = admin_load_json_files(ADMIN_MESSAGES_DIR);
+/* ---------------------------------------------------------
+   Load messages from MySQL
+   --------------------------------------------------------- */
+$messages = [];
+try {
+    $stmt = $pdo->query(
+        'SELECT * FROM messages
+         ORDER BY CreatedAt DESC'
+    );
+    $messages = $stmt->fetchAll();
+} catch (Throwable $e) {
+    error_log('admin load messages failed: ' . $e->getMessage());
+}
 
-/* Simple counts */
+/* ---------------------------------------------------------
+   Stats
+   --------------------------------------------------------- */
 $thisMonth = date('Y-m');
 $countThisMonth = 0;
 foreach ($bookings as $b) {
-    if (strpos($b['submitted_at'] ?? '', $thisMonth) === 0) {
+    if (strpos($b['SubmittedAt'] ?? '', $thisMonth) === 0) {
         $countThisMonth++;
     }
 }
 
 $confirmed = 0;
 foreach ($bookings as $b) {
-    if (($b['status'] ?? '') === 'confirmed') $confirmed++;
+    if (strtolower($b['Status'] ?? '') === 'confirmed') $confirmed++;
 }
 ?>
 <!DOCTYPE html>
@@ -136,48 +140,62 @@ foreach ($bookings as $b) {
                             <th>Date</th>
                             <th>Guests</th>
                             <th>Status</th>
+                            <th>Payment</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         <?php foreach ($bookings as $b): ?>
                             <?php
-                                $status = $b['status'] ?? 'new';
+                                $status = strtolower($b['Status'] ?? 'pending');
                                 $statusClass = 'status-' . $status;
+                                $tourName = $b['TourSlug'] === 'taxi'
+                                    ? 'Taxi Service'
+                                    : ($b['TourSlug'] ?: 'Tour');
+
+                                $payOpt    = $b['PaymentOption'] ?? 'on-day';
+                                $payLabels = [
+                                    'full'    => '💰 Full',
+                                    'deposit' => '🔒 Deposit',
+                                    'on-day'  => '💵 On Day',
+                                ];
+                                $payLabel = $payLabels[$payOpt] ?? '💵 On Day';
                             ?>
                             <tr>
                                 <td class="cell-mono">
-                                    <?= htmlspecialchars($b['reference'] ?? '—'); ?>
+                                    <?= htmlspecialchars($b['Reference'] ?? '—'); ?>
                                 </td>
 
                                 <td class="cell-date">
-                                    <?= htmlspecialchars(substr($b['submitted_at'] ?? '', 0, 16)); ?>
+                                    <?= htmlspecialchars(substr($b['SubmittedAt'] ?? '', 0, 16)); ?>
                                 </td>
 
                                 <td>
-                                    <strong><?= htmlspecialchars($b['name'] ?? '—'); ?></strong>
+                                    <strong><?= htmlspecialchars($b['Name'] ?? '—'); ?></strong>
                                 </td>
 
                                 <td class="cell-contact">
-                                    <a href="mailto:<?= htmlspecialchars($b['email'] ?? ''); ?>">
-                                        <?= htmlspecialchars($b['email'] ?? ''); ?>
+                                    <a href="mailto:<?= htmlspecialchars($b['Email'] ?? ''); ?>">
+                                        <?= htmlspecialchars($b['Email'] ?? ''); ?>
                                     </a>
-                                    <br>
-                                    <a href="tel:<?= htmlspecialchars($b['phone'] ?? ''); ?>">
-                                        <?= htmlspecialchars($b['phone'] ?? ''); ?>
-                                    </a>
+                                    <?php if (!empty($b['Phone'])): ?>
+                                        <br>
+                                        <a href="tel:<?= htmlspecialchars($b['Phone']); ?>">
+                                            <?= htmlspecialchars($b['Phone']); ?>
+                                        </a>
+                                    <?php endif; ?>
                                 </td>
 
                                 <td>
-                                    <?= htmlspecialchars($b['tour'] ?? '—'); ?>
+                                    <?= htmlspecialchars($tourName); ?>
                                 </td>
 
                                 <td class="cell-date">
-                                    <?= htmlspecialchars($b['date'] ?? '—'); ?>
+                                    <?= htmlspecialchars($b['BookingDate'] ?? '—'); ?>
                                 </td>
 
                                 <td class="cell-center">
-                                    <?= htmlspecialchars($b['guests'] ?? '—'); ?>
+                                    <?= htmlspecialchars($b['NumberOfPassengers'] ?? '—'); ?>
                                 </td>
 
                                 <td class="cell-center">
@@ -186,23 +204,37 @@ foreach ($bookings as $b) {
                                     </span>
                                 </td>
 
+                                <td class="cell-center">
+                                    <small style="font-size:12px;color:#666;white-space:nowrap;">
+                                        <?= htmlspecialchars($payLabel); ?>
+                                    </small>
+                                </td>
+
                                 <td class="cell-actions">
 
                                     <?php if ($status !== 'confirmed'): ?>
-                                        <a href="/fetecation/staff-7742/action.php?type=booking&action=confirm&file=<?= urlencode($b['_file']); ?>"
+                                        <a href="/fetecation/staff-7742/action.php?type=booking&action=confirm&id=<?= (int)$b['BookingID']; ?>"
                                            class="admin-btn admin-btn-sm admin-btn-success">
                                             Confirm
                                         </a>
                                     <?php endif; ?>
 
                                     <?php if ($status !== 'cancelled'): ?>
-                                        <a href="/fetecation/staff-7742/action.php?type=booking&action=cancel&file=<?= urlencode($b['_file']); ?>"
+                                        <a href="/fetecation/staff-7742/action.php?type=booking&action=cancel&id=<?= (int)$b['BookingID']; ?>"
                                            class="admin-btn admin-btn-sm admin-btn-warn">
                                             Cancel
                                         </a>
                                     <?php endif; ?>
 
-                                    <a href="/fetecation/staff-7742/action.php?type=booking&action=delete&file=<?= urlencode($b['_file']); ?>"
+                                    <?php if ($status !== 'cancelled' && $payOpt !== 'on-day'): ?>
+                                        <a href="/fetecation/staff-7742/action.php?type=booking&action=send-payment&id=<?= (int)$b['BookingID']; ?>"
+                                           class="admin-btn admin-btn-sm admin-btn-ghost"
+                                           title="Email the customer a PayPal payment link">
+                                            💳 Send Payment
+                                        </a>
+                                    <?php endif; ?>
+
+                                    <a href="/fetecation/staff-7742/action.php?type=booking&action=delete&id=<?= (int)$b['BookingID']; ?>"
                                        class="admin-btn admin-btn-sm admin-btn-danger"
                                        onclick="return confirm('Delete this booking permanently?');">
                                         Delete
@@ -211,17 +243,17 @@ foreach ($bookings as $b) {
                                 </td>
                             </tr>
 
-                            <?php if (!empty($b['notes']) || !empty($b['pickup'])): ?>
+                            <?php if (!empty($b['Notes']) || !empty($b['PickupLocation'])): ?>
                                 <tr class="detail-row">
-                                    <td colspan="9">
-                                        <?php if (!empty($b['pickup'])): ?>
+                                    <td colspan="10">
+                                        <?php if (!empty($b['PickupLocation'])): ?>
                                             <span class="detail-item">
-                                                <strong>Pickup:</strong> <?= htmlspecialchars($b['pickup']); ?>
+                                                <strong>Pickup:</strong> <?= htmlspecialchars($b['PickupLocation']); ?>
                                             </span>
                                         <?php endif; ?>
-                                        <?php if (!empty($b['notes'])): ?>
+                                        <?php if (!empty($b['Notes'])): ?>
                                             <span class="detail-item">
-                                                <strong>Notes:</strong> <?= htmlspecialchars($b['notes']); ?>
+                                                <strong>Notes:</strong> <?= htmlspecialchars($b['Notes']); ?>
                                             </span>
                                         <?php endif; ?>
                                     </td>
@@ -270,35 +302,35 @@ foreach ($bookings as $b) {
                         <?php foreach ($messages as $m): ?>
                             <tr>
                                 <td class="cell-date">
-                                    <?= htmlspecialchars(substr($m['submitted_at'] ?? '', 0, 16)); ?>
+                                    <?= htmlspecialchars(substr($m['CreatedAt'] ?? '', 0, 16)); ?>
                                 </td>
 
                                 <td>
-                                    <strong><?= htmlspecialchars($m['name'] ?? '—'); ?></strong>
+                                    <strong><?= htmlspecialchars($m['Name'] ?? '—'); ?></strong>
                                 </td>
 
                                 <td class="cell-contact">
-                                    <a href="mailto:<?= htmlspecialchars($m['email'] ?? ''); ?>">
-                                        <?= htmlspecialchars($m['email'] ?? ''); ?>
+                                    <a href="mailto:<?= htmlspecialchars($m['Email'] ?? ''); ?>">
+                                        <?= htmlspecialchars($m['Email'] ?? ''); ?>
                                     </a>
-                                    <?php if (!empty($m['phone'])): ?>
+                                    <?php if (!empty($m['Phone'])): ?>
                                         <br>
-                                        <a href="tel:<?= htmlspecialchars($m['phone']); ?>">
-                                            <?= htmlspecialchars($m['phone']); ?>
+                                        <a href="tel:<?= htmlspecialchars($m['Phone']); ?>">
+                                            <?= htmlspecialchars($m['Phone']); ?>
                                         </a>
                                     <?php endif; ?>
                                 </td>
 
                                 <td>
-                                    <?= htmlspecialchars($m['subject'] ?? '—'); ?>
+                                    <?= htmlspecialchars($m['Subject'] ?? '—'); ?>
                                 </td>
 
                                 <td class="cell-message">
-                                    <?= nl2br(htmlspecialchars($m['message'] ?? '')); ?>
+                                    <?= nl2br(htmlspecialchars($m['Message'] ?? '')); ?>
                                 </td>
 
                                 <td class="cell-actions">
-                                    <a href="/fetecation/staff-7742/action.php?type=message&action=delete&file=<?= urlencode($m['_file']); ?>"
+                                    <a href="/fetecation/staff-7742/action.php?type=message&action=delete&id=<?= (int)$m['MessageID']; ?>"
                                        class="admin-btn admin-btn-sm admin-btn-danger"
                                        onclick="return confirm('Delete this message permanently?');">
                                         Delete

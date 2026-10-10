@@ -631,3 +631,36 @@
 .acct-terms-label a:hover {
     color: var(--acct-burgundy);
 }
+
+/* =========================================================
+   REMEMBER ME CHECKBOX
+   ========================================================= */
+
+.acct-remember-field {
+    margin-top: -6px;
+    margin-bottom: 20px;
+}
+
+.acct-remember-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    color: var(--acct-gray);
+    cursor: pointer;
+    font-weight: 400;
+    text-transform: none;
+    letter-spacing: 0;
+}
+
+.acct-remember-label input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--acct-orange);
+    flex-shrink: 0;
+    cursor: pointer;
+}
+
+.acct-remember-label span {
+    line-height: 1.4;
+}

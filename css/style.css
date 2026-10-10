@@ -3412,3 +3412,333 @@ img {
     color: rgba(255, 255, 255, 0.25);
     margin: 0 8px;
 }
+
+/* =========================================================
+   FORM CHECKBOX (Terms / Privacy)
+   ========================================================= */
+
+.form-group-checkbox {
+    margin-top: 8px;
+    margin-bottom: 24px;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 14px;
+    color: var(--fete-gray);
+    line-height: 1.55;
+    cursor: pointer;
+    font-weight: 400;
+}
+
+.checkbox-label input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--fete-orange);
+    margin-top: 2px;
+    flex-shrink: 0;
+    cursor: pointer;
+}
+
+.checkbox-label a {
+    color: var(--fete-orange-dark);
+    font-weight: 700;
+    text-decoration: underline;
+}
+
+.checkbox-label a:hover {
+    color: var(--fete-burgundy);
+}
+
+/* =========================================================
+   ACCOUNT — profile cards
+   ========================================================= */
+
+.profile-card {
+    background: var(--fete-white);
+    border: 1px solid var(--fete-border);
+    border-radius: 14px;
+    padding: 32px 30px;
+    margin-bottom: 26px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.03);
+}
+
+.profile-card-header {
+    margin-bottom: 22px;
+    padding-bottom: 18px;
+    border-bottom: 1px solid var(--fete-border);
+}
+
+.profile-card-header h2 {
+    font-size: 20px;
+    margin-bottom: 6px;
+    color: var(--fete-dark);
+}
+
+.profile-card-header p {
+    font-size: 14px;
+    color: var(--fete-gray);
+    margin: 0;
+    line-height: 1.55;
+}
+
+.profile-card-danger {
+    border-color: #f4d5d1;
+    background: #fffafa;
+}
+
+.profile-card-danger .profile-card-header h2 {
+    color: #a03027;
+}
+
+/* Status badges */
+.badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 10px;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+    margin-left: 6px;
+    vertical-align: middle;
+}
+
+.badge-success {
+    background: #e8f6ec;
+    color: #2c7a3d;
+}
+
+.badge-warn {
+    background: #fff6e4;
+    color: #8a5c10;
+}
+
+/* Danger button */
+.danger-button {
+    display: inline-block;
+    padding: 12px 22px;
+    background: #a03027;
+    color: var(--fete-white);
+    border: none;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.15s;
+}
+
+.danger-button:hover {
+    background: #7d2620;
+    transform: translateY(-1px);
+}
+
+.danger-button:active {
+    transform: translateY(0);
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+    .profile-card {
+        padding: 24px 20px;
+    }
+
+    .profile-card-header h2 {
+        font-size: 18px;
+    }
+}
+
+/* =========================================================
+   CONTACT — Google Maps embed
+   ========================================================= */
+
+.contact-map-section {
+    padding: 0 0 90px;
+}
+
+.contact-map {
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid var(--fete-border);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    line-height: 0;   /* removes the inline-block whitespace gap */
+    background: var(--fete-light);
+}
+
+.contact-map iframe {
+    display: block;
+    width: 100%;
+    height: 420px;
+    border: 0;
+}
+
+@media (max-width: 600px) {
+    .contact-map-section {
+        padding: 0 0 60px;
+    }
+
+    .contact-map iframe {
+        height: 280px;
+    }
+}
+
+/* =========================================================
+   404 ERROR PAGE
+   ========================================================= */
+
+.error-layout {
+    max-width: 640px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.error-card {
+    background: var(--fete-white);
+    border: 1px solid var(--fete-border);
+    border-radius: 16px;
+    padding: 55px 45px;
+    box-shadow: var(--shadow);
+}
+
+.error-icon {
+    font-size: 72px;
+    line-height: 1;
+    margin-bottom: 22px;
+}
+
+.error-card h2 {
+    font-size: 28px;
+    margin-bottom: 14px;
+    color: var(--fete-dark);
+}
+
+.error-card p {
+    color: var(--fete-gray);
+    font-size: 16px;
+    line-height: 1.6;
+    max-width: 460px;
+    margin: 0 auto 30px;
+}
+
+.error-actions {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 34px;
+}
+
+.error-links {
+    padding-top: 26px;
+    border-top: 1px solid var(--fete-border);
+    display: flex;
+    justify-content: center;
+    gap: 22px;
+    flex-wrap: wrap;
+    font-size: 14px;
+}
+
+.error-links a {
+    color: var(--fete-orange-dark);
+    font-weight: 700;
+    transition: color 0.2s;
+}
+
+.error-links a:hover {
+    color: var(--fete-burgundy);
+    text-decoration: underline;
+}
+
+@media (max-width: 600px) {
+    .error-card {
+        padding: 40px 24px;
+    }
+
+    .error-icon {
+        font-size: 56px;
+    }
+
+    .error-card h2 {
+        font-size: 22px;
+    }
+
+    .error-actions {
+        flex-direction: column;
+    }
+
+    .error-actions .primary-button,
+    .error-actions .secondary-button {
+        width: 100%;
+        text-align: center;
+    }
+
+    .error-links {
+        gap: 14px;
+        flex-direction: column;
+    }
+}
+
+/* =========================================================
+   PAYMENT CTA — booking success page
+   ========================================================= */
+
+.payment-cta {
+    background: var(--fete-light);
+    border: 1px solid var(--fete-border);
+    border-radius: 12px;
+    padding: 28px 26px;
+    margin: 28px 0;
+    text-align: center;
+}
+
+.payment-cta-plain {
+    background: #f8f8f8;
+    border-color: #ebebeb;
+}
+
+.payment-note {
+    font-size: 15px;
+    color: var(--fete-gray);
+    margin: 0 0 20px;
+    line-height: 1.6;
+}
+
+.payment-note strong {
+    color: var(--fete-dark);
+}
+
+.payment-button {
+    display: inline-block;
+    padding: 16px 36px;
+    font-size: 16px;
+    font-weight: 800;
+    letter-spacing: 0.3px;
+    box-shadow: 0 10px 24px rgba(233, 120, 63, 0.25);
+}
+
+.payment-button:hover {
+    box-shadow: 0 12px 28px rgba(233, 120, 63, 0.35);
+    transform: translateY(-2px);
+}
+
+.payment-secure {
+    margin: 14px 0 0;
+    font-size: 12.5px;
+    color: var(--fete-gray);
+    letter-spacing: 0.4px;
+}
+
+/* Inline admin btn — for "Send Payment" button */
+.admin-btn-ghost {
+    background: transparent;
+    color: var(--admin-dark, #151515);
+    border: 1px solid var(--fete-border, #eaded6);
+}
+
+.admin-btn-ghost:hover {
+    background: var(--fete-light, #fff8f2);
+    border-color: var(--fete-orange, #e9783f);
+    color: var(--fete-orange-dark, #c94f2c);
+}

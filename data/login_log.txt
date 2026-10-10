@@ -3,3 +3,7 @@
 [2026-10-10 15:28:35] LOGIN_FAIL | ip=::1 | ua=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) | unknown username: admin@visrs.local
 [2026-10-10 15:28:55] LOGIN_2FA_SENT | ip=::1 | ua=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) | code emailed to admin
 [2026-10-10 15:29:18] LOGIN_SUCCESS | ip=::1 | ua=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) | admin signed in
+[2026-10-10 17:17:02] LOGIN_2FA_SENT | ip=::1 | ua=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) | code emailed to admin
+[2026-10-10 17:17:26] LOGIN_SUCCESS | ip=::1 | ua=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) | admin signed in
+[2026-10-10 19:07:40] LOGIN_2FA_SENT | ip=::1 | ua=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) | code emailed to admin
+[2026-10-10 19:08:01] LOGIN_SUCCESS | ip=::1 | ua=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) | admin signed in
