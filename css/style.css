@@ -307,172 +307,6 @@ img {
 
 
 /* =========================================================
-   HEADER LOGO — circular crop mask
-   ---------------------------------------------------------
-   The logo.png has a square black background baked into the
-   file, so we wrap the image in a fixed-size circle and zoom
-   it in so the black corners fall outside the visible area.
-   ========================================================= */
-
-.site-logo {
-    display: flex;
-    align-items: center;
-    flex-shrink: 0;
-    text-decoration: none;
-    line-height: 0;
-    margin-left: -100px;   /* pull logo slightly left */
-}
-.site-logo-circle {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 52px;
-    height: 52px;
-    border-radius: 50%;
-    overflow: hidden;
-    background: var(--fete-white);
-    border: 2px solid var(--fete-orange);
-    box-shadow: 0 2px 8px rgba(123, 48, 45, 0.12);
-    transition: var(--transition);
-    flex-shrink: 0;
-}
-
-.site-logo-circle img {
-    display: block;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transform: scale(1.35);
-    transform-origin: center center;
-}
-
-.site-logo:hover .site-logo-circle {
-    transform: translateY(-1px);
-    box-shadow: 0 4px 14px rgba(233, 120, 63, 0.30);
-}
-
-
-/* =========================================================
-   NAVIGATION
-   ========================================================= */
-
-.main-navigation {
-    display: flex;
-    align-items: center;
-    gap: 26px;
-}
-
-.main-navigation a {
-    font-size: 14px;
-    font-weight: 600;
-    letter-spacing: 0.2px;
-    color: var(--fete-dark);
-    transition: var(--transition);
-    position: relative;
-}
-
-.main-navigation a:hover {
-    color: var(--fete-orange-dark);
-}
-
-.main-navigation a:not(.nav-book-button)::after {
-    content: "";
-    position: absolute;
-    left: 0;
-    bottom: -4px;
-    width: 0;
-    height: 2px;
-    background: var(--fete-orange);
-    transition: width 0.25s ease;
-}
-
-.main-navigation a:not(.nav-book-button):hover::after {
-    width: 100%;
-}
-
-.nav-book-button {
-    background: var(--fete-orange);
-    color: var(--fete-white) !important;
-    padding: 10px 20px;
-    border-radius: 6px;
-    font-weight: 700;
-    font-size: 14px;
-    transition: var(--transition);
-}
-
-.nav-book-button:hover {
-    background: var(--fete-orange-dark);
-    transform: translateY(-1px);
-    box-shadow: 0 6px 16px rgba(233, 120, 63, 0.28);
-}
-
-.nav-book-button::after {
-    display: none;
-}
-
-
-/* =========================================================
-   HEADER RESPONSIVE
-   ========================================================= */
-
-@media (max-width: 850px) {
-
-    .header-container {
-        flex-direction: column;
-        padding: 14px 0;
-        gap: 12px;
-        min-height: auto;
-    }
-
-    .site-logo-circle {
-        width: 48px;
-        height: 48px;
-    }
-
-    .main-navigation {
-        flex-wrap: wrap;
-        justify-content: center;
-        gap: 14px;
-    }
-
-    .main-navigation a {
-        font-size: 13px;
-    }
-
-    .nav-book-button {
-        padding: 9px 18px;
-    }
-}
-
-
-@media (max-width: 600px) {
-
-    .header-container {
-        padding: 10px 0;
-        min-height: 60px;
-    }
-
-    .site-logo-circle {
-        width: 44px;
-        height: 44px;
-    }
-
-    .main-navigation {
-        gap: 10px;
-    }
-
-    .main-navigation a {
-        font-size: 12.5px;
-    }
-
-    .nav-book-button {
-        padding: 8px 16px;
-        font-size: 12.5px;
-    }
-}
-
-
-/* =========================================================
    FOOTER
    ========================================================= */
 
@@ -913,6 +747,9 @@ img {
             var(--fete-orange),
             var(--fete-yellow)
         );
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
 }
 
 .tour-placeholder {
@@ -1295,7 +1132,6 @@ img {
     padding: 100px 0;
 }
 
-/* Hero brand logo — smaller, badge style */
 .hero-brand {
     margin-bottom: 22px;
 }
@@ -1693,6 +1529,7 @@ img {
 
     background-size: cover;
     background-position: center;
+    background-repeat: no-repeat;
 }
 
 .tour-one {
@@ -1701,7 +1538,7 @@ img {
             rgba(123, 48, 45, 0.18),
             rgba(123, 48, 45, 0.18)
         ),
-        url("/fetecation/images/tour-1.jpg");
+        url("/fetecation/images/tours/island-highlights-1.jpg");
 }
 
 .tour-two {
@@ -1710,7 +1547,7 @@ img {
             rgba(123, 48, 45, 0.18),
             rgba(123, 48, 45, 0.18)
         ),
-        url("/fetecation/images/tour-2.jpg");
+        url("/fetecation/images/tours/nature-adventure-1.jpg");
 }
 
 .tour-three {
@@ -1719,7 +1556,7 @@ img {
             rgba(123, 48, 45, 0.18),
             rgba(123, 48, 45, 0.18)
         ),
-        url("/fetecation/images/tour-3.jpg");
+        url("/fetecation/images/tours/custom-island-1.jpg");
 }
 
 .tour-overlay-label {
@@ -1860,7 +1697,6 @@ img {
     text-align: center;
 }
 
-/* Smaller logo inside the "why" visual card */
 .why-visual-inner img {
     width: 100px;
     height: auto;
@@ -2067,6 +1903,7 @@ img {
     }
 }
 
+
 /* =========================================================
    TOUR DETAIL PAGE
    ========================================================= */
@@ -2093,6 +1930,9 @@ img {
             var(--fete-orange),
             var(--fete-yellow)
         );
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
 }
 
 .tour-detail-image .tour-placeholder {
@@ -2299,6 +2139,7 @@ img {
     color: var(--fete-white);
 }
 
+
 @media (max-width: 1000px) {
 
     .tour-detail-layout {
@@ -2314,6 +2155,7 @@ img {
         grid-template-columns: 1fr 1fr;
     }
 }
+
 
 @media (max-width: 600px) {
 
@@ -2334,6 +2176,7 @@ img {
         gap: 12px;
     }
 }
+
 
 /* =========================================================
    CUSTOM TOUR — "How It Works" steps
@@ -2393,6 +2236,7 @@ img {
     margin: 0;
 }
 
+
 /* =========================================================
    CUSTOM TOUR — "Great For" ideas grid
    ========================================================= */
@@ -2437,6 +2281,7 @@ img {
     line-height: 1.35;
 }
 
+
 /* =========================================================
    CUSTOM TOUR — responsive
    ========================================================= */
@@ -2476,6 +2321,7 @@ img {
         font-size: 12px;
     }
 }
+
 
 /* =========================================================
    FORM ERRORS
@@ -2633,9 +2479,6 @@ img {
     justify-content: center;
 }
 
-/* =========================================================
-   BOOKING SUCCESS — responsive
-   ========================================================= */
 
 @media (max-width: 600px) {
 
@@ -2686,6 +2529,7 @@ img {
     }
 }
 
+
 /* =========================================================
    FLOATING WHATSAPP BUTTON
    ========================================================= */
@@ -2732,7 +2576,6 @@ img {
     white-space: nowrap;
 }
 
-/* Icon-only on smaller screens */
 @media (max-width: 600px) {
 
     .whatsapp-float {
@@ -2745,4 +2588,329 @@ img {
     .whatsapp-float-label {
         display: none;
     }
+}
+
+/* =========================================================
+   TESTIMONIALS — horizontal slider
+   ========================================================= */
+
+.testimonials-section {
+    padding: 115px 0;
+    background: var(--fete-white);
+    overflow: hidden;   /* clips the slider horizontally */
+}
+
+.testimonials-section .centered-heading {
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+}
+
+.testimonials-slider-wrap {
+    margin-top: 55px;
+    position: relative;
+}
+
+/* Optional: fade edges */
+.testimonials-slider-wrap::before,
+.testimonials-slider-wrap::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 60px;
+    z-index: 2;
+    pointer-events: none;
+}
+
+.testimonials-slider-wrap::before {
+    left: 0;
+    background: linear-gradient(
+        to right,
+        var(--fete-white) 0%,
+        rgba(255, 255, 255, 0) 100%
+    );
+}
+
+.testimonials-slider-wrap::after {
+    right: 0;
+    background: linear-gradient(
+        to left,
+        var(--fete-white) 0%,
+        rgba(255, 255, 255, 0) 100%
+    );
+}
+
+/* The actual scroller */
+.testimonials-slider {
+    display: flex;
+    gap: 24px;
+
+    padding: 10px 60px 30px;   /* top / sides / bottom */
+    margin: 0;
+
+    overflow-x: auto;
+    overflow-y: hidden;
+
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+
+    /* Hide scrollbar (Firefox) */
+    scrollbar-width: none;
+
+    /* Keep on a single line */
+    flex-wrap: nowrap;
+}
+
+/* Hide scrollbar (Chrome / Safari) */
+.testimonials-slider::-webkit-scrollbar {
+    display: none;
+}
+
+/* Individual card */
+.testimonial-card {
+    flex: 0 0 340px;         /* fixed width for each card */
+    scroll-snap-align: start;
+
+    display: flex;
+    flex-direction: column;
+
+    background: var(--fete-light);
+    border: 1px solid var(--fete-border);
+    border-radius: 14px;
+    padding: 30px 28px;
+    margin: 0;
+
+    box-shadow: 0 4px 14px rgba(123, 48, 45, 0.04);
+    transition: var(--transition);
+}
+
+.testimonial-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow);
+    border-color: var(--fete-orange);
+}
+
+.testimonial-stars {
+    color: var(--fete-orange);
+    font-size: 18px;
+    letter-spacing: 3px;
+    margin-bottom: 14px;
+}
+
+.testimonial-text {
+    font-size: 15.5px;
+    line-height: 1.65;
+    color: var(--fete-dark);
+    margin: 0 0 24px;
+    quotes: none;
+    font-style: normal;
+}
+
+.testimonial-author {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-top: auto;
+    padding-top: 20px;
+    border-top: 1px solid var(--fete-border);
+}
+
+.testimonial-avatar {
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    background: var(--fete-orange);
+    color: var(--fete-white);
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 18px;
+    font-weight: 800;
+    letter-spacing: 0;
+    flex-shrink: 0;
+    overflow: hidden;
+}
+
+.testimonial-avatar-img {
+    object-fit: cover;
+    background: var(--fete-light);
+}
+
+.testimonial-author strong {
+    display: block;
+    font-size: 15px;
+    color: var(--fete-dark);
+    line-height: 1.2;
+}
+
+.testimonial-location {
+    font-size: 13px;
+    color: var(--fete-gray);
+    display: block;
+    margin-top: 3px;
+}
+
+/* =========================================================
+   TESTIMONIALS — responsive
+   ========================================================= */
+
+@media (max-width: 900px) {
+    .testimonials-section {
+        padding: 85px 0;
+    }
+
+    .testimonial-card {
+        flex: 0 0 300px;
+        padding: 26px 22px;
+    }
+
+    .testimonials-slider {
+        padding: 10px 40px 25px;
+    }
+}
+
+@media (max-width: 600px) {
+    .testimonials-section {
+        padding: 70px 0;
+    }
+
+    .testimonial-card {
+        flex: 0 0 85vw;
+    }
+
+    .testimonials-slider {
+        gap: 16px;
+        padding: 10px 20px 25px;
+    }
+
+    .testimonials-slider-wrap::before,
+    .testimonials-slider-wrap::after {
+        width: 30px;
+    }
+
+    .testimonial-text {
+        font-size: 15px;
+    }
+}
+
+/* =========================================================
+   TESTIMONIALS — arrow navigation buttons
+   ========================================================= */
+
+.testimonials-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 5;
+
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+
+    background: var(--fete-white);
+    color: var(--fete-dark);
+
+    border: 1px solid var(--fete-border);
+    box-shadow: 0 6px 20px rgba(123, 48, 45, 0.15);
+
+    font-size: 26px;
+    font-weight: 700;
+    line-height: 1;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    cursor: pointer;
+    padding: 0;
+    padding-bottom: 3px;   /* optical centering of the ‹ › glyphs */
+
+    transition: var(--transition);
+}
+
+.testimonials-nav:hover {
+    background: var(--fete-orange);
+    color: var(--fete-white);
+    border-color: var(--fete-orange);
+    transform: translateY(-50%) scale(1.05);
+    box-shadow: 0 8px 22px rgba(233, 120, 63, 0.35);
+}
+
+.testimonials-nav:active {
+    transform: translateY(-50%) scale(0.96);
+}
+
+.testimonials-nav-prev {
+    left: 12px;
+}
+
+.testimonials-nav-next {
+    right: 12px;
+}
+
+/* Focus ring for keyboard users */
+.testimonials-nav:focus-visible {
+    outline: 3px solid var(--fete-orange);
+    outline-offset: 3px;
+}
+
+/* Remove arrow buttons on very small screens if you prefer swiping */
+@media (max-width: 600px) {
+    .testimonials-nav {
+        width: 40px;
+        height: 40px;
+        font-size: 22px;
+    }
+
+    .testimonials-nav-prev { left: 6px; }
+    .testimonials-nav-next { right: 6px; }
+}
+
+/* =========================================================
+   CONTACT FORM — success message
+   ========================================================= */
+
+.form-success {
+    background: #f0f8f1;
+    border: 1px solid #4caf50;
+    border-left: 4px solid #4caf50;
+    border-radius: 8px;
+    padding: 18px 22px;
+    margin-bottom: 28px;
+    color: #2e5c30;
+}
+
+.form-success strong {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 15px;
+}
+
+.form-success p {
+    font-size: 14px;
+    margin: 0;
+    line-height: 1.6;
+}
+
+/* =========================================================
+   FOOTER — staff login link
+   ========================================================= */
+
+.footer-sep {
+    margin: 0 8px;
+    color: rgba(255, 255, 255, 0.25);
+}
+
+.footer-staff-link {
+    color: rgba(255, 255, 255, 0.45);
+    font-size: 13px;
+    transition: color 0.2s ease;
+    text-decoration: none;
+}
+
+.footer-staff-link:hover {
+    color: var(--fete-yellow);
 }

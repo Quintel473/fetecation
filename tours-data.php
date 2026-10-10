@@ -11,6 +11,7 @@ $TOURS = [
         'tag'         => 'POPULAR',
         'tagline'     => 'See the best of the island in one unforgettable day.',
         'emoji'       => '🌅',
+        'image'       => '/fetecation/images/tours/island-highlights-1.jpg',
         'duration'    => '4–6 hours',
         'group'       => 'Up to 6 people',
         'price'       => 'From $120 / person',
@@ -39,21 +40,21 @@ $TOURS = [
         ],
 
         'itinerary' => [
-            ['time' => '9:00 AM',  'title' => 'Pickup from your hotel',      'text' => 'Your guide meets you at your accommodation or cruise port.'],
-            ['time' => '9:30 AM',  'title' => 'Scenic viewpoint stop',       'text' => 'Panoramic photo stop overlooking the coastline.'],
-            ['time' => '11:00 AM', 'title' => 'Beach time',                  'text' => 'Relax on a pristine beach with time to swim.'],
-            ['time' => '1:00 PM',  'title' => 'Local lunch (optional)',      'text' => 'Stop at a favourite local spot for authentic cuisine.'],
-            ['time' => '3:00 PM',  'title' => 'Cultural landmark visit',     'text' => 'Learn about the island\'s history at a key landmark.'],
+            ['time' => '9:00 AM',  'title' => 'Pickup from your hotel',       'text' => 'Your guide meets you at your accommodation or cruise port.'],
+            ['time' => '9:30 AM',  'title' => 'Scenic viewpoint stop',        'text' => 'Panoramic photo stop overlooking the coastline.'],
+            ['time' => '11:00 AM', 'title' => 'Beach time',                   'text' => 'Relax on a pristine beach with time to swim.'],
+            ['time' => '1:00 PM',  'title' => 'Local lunch (optional)',       'text' => 'Stop at a favourite local spot for authentic cuisine.'],
+            ['time' => '3:00 PM',  'title' => 'Cultural landmark visit',      'text' => 'Learn about the island\'s history at a key landmark.'],
             ['time' => '5:00 PM',  'title' => 'Return to your accommodation', 'text' => 'Drop-off at your hotel or cruise port.'],
         ],
     ],
-
 
     'nature-adventure' => [
         'name'        => 'Nature & Adventure',
         'tag'         => 'EXPERIENCE',
         'tagline'     => 'Get off the beaten path and into the wild.',
         'emoji'       => '🌴',
+        'image'       => '/fetecation/images/tours/nature-adventure-1.jpg',
         'duration'    => '5–7 hours',
         'group'       => 'Up to 6 people',
         'price'       => 'From $150 / person',
@@ -91,12 +92,12 @@ $TOURS = [
         ],
     ],
 
-
     'custom-island' => [
         'name'        => 'Custom Island Experience',
         'tag'         => 'CUSTOM',
         'tagline'     => 'Your island, your way — built around what you love.',
         'emoji'       => '🌅',
+        'image'       => '/fetecation/images/tours/custom-island-1.jpg',
         'duration'    => 'Custom schedule',
         'group'       => 'Up to 12 people',
         'price'       => 'Custom quote',
@@ -126,7 +127,6 @@ $TOURS = [
             'Camera or phone (you\'ll want photos)',
         ],
 
-        /* Replaces the standard itinerary for the custom page */
         'how_it_works' => [
             [
                 'step'  => '01',
@@ -150,7 +150,6 @@ $TOURS = [
             ],
         ],
 
-        /* Ideas section — replaces generic "About" blurb with concrete examples */
         'ideas' => [
             ['icon' => '💍', 'title' => 'Wedding & celebrations'],
             ['icon' => '📸', 'title' => 'Photography tours'],
@@ -162,20 +161,13 @@ $TOURS = [
             ['icon' => '🎯', 'title' => 'Anything you can dream up'],
         ],
     ],
-
 ];
 
-/**
- * Helper — return a tour or null.
- */
 function fete_tour($slug) {
     global $TOURS;
     return isset($TOURS[$slug]) ? $TOURS[$slug] : null;
 }
 
-/**
- * Helper — return all tours.
- */
 function fete_all_tours() {
     global $TOURS;
     return $TOURS;

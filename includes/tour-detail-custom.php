@@ -45,10 +45,8 @@ require __DIR__ . '/header.php';
         <!-- ============ LEFT ============ -->
         <article class="tour-detail-main">
 
-            <div class="tour-detail-image">
-                <div class="tour-placeholder">
-                    <?= htmlspecialchars($tour['emoji']); ?>
-                </div>
+            <div class="tour-detail-image"
+                 style="background-image: url('<?= htmlspecialchars($tour['image']); ?>');">
             </div>
 
             <ul class="tour-stats">
@@ -208,10 +206,8 @@ require __DIR__ . '/header.php';
                 <a href="/fetecation/tours/<?= htmlspecialchars($slug); ?>.php"
                    class="tour-card">
 
-                    <div class="tour-image">
-                        <div class="tour-placeholder">
-                            <?= htmlspecialchars($other['emoji']); ?>
-                        </div>
+                    <div class="tour-image"
+                         style="background-image: url('<?= htmlspecialchars($other['image']); ?>');">
                     </div>
 
                     <div class="tour-content">

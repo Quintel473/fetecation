@@ -2,6 +2,61 @@
 
 $pageTitle = "Contact Us";
 
+require_once __DIR__ . "/includes/mailer.php";
+
+/* ---------------------------------------------------------
+   Handle form submission
+   --------------------------------------------------------- */
+$errors    = [];
+$success   = false;
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+    $name    = trim($_POST['name']    ?? '');
+    $email   = trim($_POST['email']   ?? '');
+    $phone   = trim($_POST['phone']   ?? '');
+    $subject = trim($_POST['subject'] ?? '');
+    $message = trim($_POST['message'] ?? '');
+
+    if ($name === '')    $errors[] = 'Please enter your name.';
+    if ($email === '' || !filter_var($email, FILTER_VALIDATE_EMAIL))
+                         $errors[] = 'Please enter a valid email address.';
+    if ($subject === '') $errors[] = 'Please enter a subject.';
+    if ($message === '') $errors[] = 'Please write your message.';
+
+    if (empty($errors)) {
+
+        $submittedAt = date('Y-m-d H:i:s');
+
+        $contact = [
+            'name'         => $name,
+            'email'        => $email,
+            'phone'        => $phone,
+            'subject'      => $subject,
+            'message'      => $message,
+            'submitted_at' => $submittedAt,
+            'ip'           => $_SERVER['REMOTE_ADDR'] ?? '',
+        ];
+
+        /* Save to disk */
+        $dir = __DIR__ . '/data/messages';
+        if (!is_dir($dir)) {
+            @mkdir($dir, 0775, true);
+        }
+        $filename = $dir . '/' . date('Y-m-d_His') . '_' . bin2hex(random_bytes(3)) . '.json';
+        @file_put_contents($filename, json_encode($contact, JSON_PRETTY_PRINT));
+
+        /* Send to business + auto-reply to sender */
+        send_contact_notification($contact);
+        send_contact_autoreply($contact);
+
+        $success = true;
+
+        /* Clear form values after successful submit */
+        $_POST = [];
+    }
+}
+
 require_once __DIR__ . "/includes/header.php";
 
 ?>
@@ -57,7 +112,7 @@ require_once __DIR__ . "/includes/header.php";
 
                 <div>
                     <h3>Phone</h3>
-                    <p>+1 473 459-7407</p>
+                    <p>+1 473 456-0954</p>
                 </div>
 
             </div>
@@ -71,7 +126,7 @@ require_once __DIR__ . "/includes/header.php";
 
                 <div>
                     <h3>Email</h3>
-                    <p>fetecation9@gmail.com</p>
+                    <p>quintelcharles@gmail.com</p>
                 </div>
 
             </div>
@@ -90,6 +145,27 @@ require_once __DIR__ . "/includes/header.php";
 
             </div>
 
+
+            <div class="contact-item">
+
+                <div class="contact-icon">
+                    💬
+                </div>
+
+                <div>
+                    <h3>WhatsApp</h3>
+                    <p>
+                        <a href="https://wa.me/14734560954?text=Hi%20FeteCation!%20I%20have%20a%20question."
+                           target="_blank"
+                           rel="noopener"
+                           style="color:var(--fete-orange-dark);font-weight:700;">
+                            Chat with us →
+                        </a>
+                    </p>
+                </div>
+
+            </div>
+
         </div>
 
 
@@ -99,12 +175,35 @@ require_once __DIR__ . "/includes/header.php";
                 Send Us a Message
             </h2>
 
-            <form method="POST" action="">
+            <?php if ($success): ?>
+
+                <div class="form-success">
+                    <strong>✅ Message sent!</strong>
+                    <p>
+                        Thanks for reaching out. We've received your message
+                        and will reply within 24 hours.
+                    </p>
+                </div>
+
+            <?php endif; ?>
+
+            <?php if (!empty($errors)): ?>
+                <div class="form-errors">
+                    <strong>Please fix the following:</strong>
+                    <ul>
+                        <?php foreach ($errors as $e): ?>
+                            <li><?= htmlspecialchars($e); ?></li>
+                        <?php endforeach; ?>
+                    </ul>
+                </div>
+            <?php endif; ?>
+
+            <form method="POST" action="/fetecation/contact.php">
 
                 <div class="form-group">
 
                     <label for="name">
-                        Name
+                        Name *
                     </label>
 
                     <input
@@ -112,6 +211,8 @@ require_once __DIR__ . "/includes/header.php";
                         id="name"
                         name="name"
                         placeholder="Your name"
+                        required
+                        value="<?= htmlspecialchars($_POST['name'] ?? ''); ?>"
                     >
 
                 </div>
@@ -120,7 +221,7 @@ require_once __DIR__ . "/includes/header.php";
                 <div class="form-group">
 
                     <label for="email">
-                        Email
+                        Email *
                     </label>
 
                     <input
@@ -128,6 +229,8 @@ require_once __DIR__ . "/includes/header.php";
                         id="email"
                         name="email"
                         placeholder="Your email"
+                        required
+                        value="<?= htmlspecialchars($_POST['email'] ?? ''); ?>"
                     >
 
                 </div>
@@ -144,6 +247,7 @@ require_once __DIR__ . "/includes/header.php";
                         id="phone"
                         name="phone"
                         placeholder="Your phone number"
+                        value="<?= htmlspecialchars($_POST['phone'] ?? ''); ?>"
                     >
 
                 </div>
@@ -152,7 +256,7 @@ require_once __DIR__ . "/includes/header.php";
                 <div class="form-group">
 
                     <label for="subject">
-                        Subject
+                        Subject *
                     </label>
 
                     <input
@@ -160,6 +264,8 @@ require_once __DIR__ . "/includes/header.php";
                         id="subject"
                         name="subject"
                         placeholder="How can we help?"
+                        required
+                        value="<?= htmlspecialchars($_POST['subject'] ?? ''); ?>"
                     >
 
                 </div>
@@ -168,7 +274,7 @@ require_once __DIR__ . "/includes/header.php";
                 <div class="form-group">
 
                     <label for="message">
-                        Message
+                        Message *
                     </label>
 
                     <textarea
@@ -176,7 +282,8 @@ require_once __DIR__ . "/includes/header.php";
                         name="message"
                         rows="6"
                         placeholder="Your message"
-                    ></textarea>
+                        required
+                    ><?= htmlspecialchars($_POST['message'] ?? ''); ?></textarea>
 
                 </div>
 

@@ -52,10 +52,8 @@ $tours = fete_all_tours();
                 <a href="/fetecation/tours/<?= htmlspecialchars($slug); ?>.php"
                    class="tour-card">
 
-                    <div class="tour-image">
-                        <div class="tour-placeholder">
-                            <?= htmlspecialchars($tour['emoji']); ?>
-                        </div>
+                    <div class="tour-image"
+                         style="background-image: url('<?= htmlspecialchars($tour['image']); ?>');">
                     </div>
 
                     <div class="tour-content">

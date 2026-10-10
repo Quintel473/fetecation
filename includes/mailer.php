@@ -1,6 +1,6 @@
 <?php
 /**
- * Mailer helper — sends booking emails via Gmail SMTP + PHPMailer.
+ * Mailer helper — sends booking + contact emails via Gmail SMTP + PHPMailer.
  */
 
 use PHPMailer\PHPMailer\PHPMailer;
@@ -16,7 +16,7 @@ require_once __DIR__ . '/PHPMailer/src/Exception.php';
    ========================================================= */
 
 const FETE_SMTP_USER = 'qunitelcharles@gmail.com';
-const FETE_SMTP_PASS = 'yrob tfxz zmml mqdf';  // ← paste your NEW App Password here
+const FETE_SMTP_PASS = 'yrob tfxz zmml mqdf';
 const FETE_SMTP_TO   = 'qunitelcharles@gmail.com';
 
 
@@ -26,9 +26,6 @@ const FETE_SMTP_TO   = 'qunitelcharles@gmail.com';
 function fete_mailer()
 {
     $mail = new PHPMailer(true);
-
-    $mail->SMTPDebug   = 2;
-    $mail->Debugoutput = 'echo';
 
     $mail->isSMTP();
     $mail->Host       = 'smtp.gmail.com';
@@ -46,9 +43,10 @@ function fete_mailer()
 }
 
 
-/**
- * Send the "new booking" notification to the business.
- */
+/* =========================================================
+   BOOKING EMAILS
+   ========================================================= */
+
 function send_booking_notification($booking)
 {
     try {
@@ -73,20 +71,12 @@ function send_booking_notification($booking)
 
         $mail->send();
 
-        echo "<p style='color:green;font-weight:bold;'>✅ Booking notification sent.</p>";
-
     } catch (Exception $e) {
-        echo "<div style='background:#ffe;border:1px solid #e9783f;padding:12px;margin:12px;font-family:monospace;'>";
-        echo "<strong>Booking notification FAILED:</strong><br>";
-        echo htmlspecialchars($mail->ErrorInfo);
-        echo "</div>";
+        error_log('Booking notification failed: ' . $mail->ErrorInfo);
     }
 }
 
 
-/**
- * Send the "thanks, we got it" confirmation to the customer.
- */
 function send_customer_confirmation($booking)
 {
     try {
@@ -107,18 +97,74 @@ function send_customer_confirmation($booking)
             . "Reference:    {$booking['reference']}\n\n"
             . "We'll confirm availability and send you the final details within 24 hours.\n\n"
             . "If you need to reach us sooner:\n"
-            . "Phone/WhatsApp: +1 (555) 000-0000\n\n"
+            . "Phone/WhatsApp: +1 (473) 456-0954\n\n"
             . "See you soon,\n"
             . "The FeteCation Team\n";
 
         $mail->send();
 
-        echo "<p style='color:green;font-weight:bold;'>✅ Customer confirmation sent.</p>";
+    } catch (Exception $e) {
+        error_log('Customer confirmation failed: ' . $mail->ErrorInfo);
+    }
+}
+
+
+/* =========================================================
+   CONTACT FORM EMAILS
+   ========================================================= */
+
+function send_contact_notification($contact)
+{
+    try {
+        $mail = fete_mailer();
+        $mail->addAddress(FETE_SMTP_TO);
+        $mail->addReplyTo($contact['email'], $contact['name']);
+
+        $mail->Subject = 'New Contact Message: ' . $contact['subject'];
+
+        $mail->Body =
+              "New contact form message received.\n\n"
+            . "Name:      {$contact['name']}\n"
+            . "Email:     {$contact['email']}\n"
+            . "Phone:     {$contact['phone']}\n"
+            . "Subject:   {$contact['subject']}\n\n"
+            . "Message:\n"
+            . "{$contact['message']}\n\n"
+            . "Submitted: {$contact['submitted_at']}\n";
+
+        $mail->send();
 
     } catch (Exception $e) {
-        echo "<div style='background:#ffe;border:1px solid #e9783f;padding:12px;margin:12px;font-family:monospace;'>";
-        echo "<strong>Customer confirmation FAILED:</strong><br>";
-        echo htmlspecialchars($mail->ErrorInfo);
-        echo "</div>";
+        error_log('Contact notification failed: ' . $mail->ErrorInfo);
+    }
+}
+
+
+function send_contact_autoreply($contact)
+{
+    try {
+        $mail = fete_mailer();
+        $mail->addAddress($contact['email'], $contact['name']);
+        $mail->addReplyTo(FETE_SMTP_TO, 'FeteCation Taxi & Tours');
+
+        $mail->Subject = 'We got your message — FeteCation';
+
+        $mail->Body =
+              "Hi {$contact['name']},\n\n"
+            . "Thanks for reaching out to FeteCation!\n\n"
+            . "We've received your message and will get back to you\n"
+            . "within 24 hours.\n\n"
+            . "For reference, here's a copy of what you sent:\n\n"
+            . "Subject: {$contact['subject']}\n"
+            . "{$contact['message']}\n\n"
+            . "If you need a faster reply, message us on WhatsApp:\n"
+            . "https://wa.me/14734560954\n\n"
+            . "Talk soon,\n"
+            . "The FeteCation Team\n";
+
+        $mail->send();
+
+    } catch (Exception $e) {
+        error_log('Contact autoreply failed: ' . $mail->ErrorInfo);
     }
 }
