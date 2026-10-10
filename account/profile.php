@@ -41,7 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if ($result['ok']) {
             $notice = 'Profile updated.';
-            $customer = customer_current(); /* refresh */
+            $customer = customer_current();
         } else {
             $profileError = $result['error'];
         }
@@ -89,6 +89,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
+    /* ---- Upload avatar ---- */
+    elseif ($action === 'upload-avatar') {
+
+        $result = customer_upload_avatar(
+            (int)$customer['CustomerID'],
+            $_FILES['avatar'] ?? []
+        );
+
+        if ($result['ok']) {
+            $notice   = 'Profile picture updated.';
+            $customer = customer_current();
+        } else {
+            $profileError = $result['error'];
+        }
+    }
+
+    /* ---- Remove avatar ---- */
+    elseif ($action === 'remove-avatar') {
+
+        if (customer_remove_avatar((int)$customer['CustomerID'])) {
+            $notice   = 'Profile picture removed.';
+            $customer = customer_current();
+        } else {
+            $profileError = 'Could not remove the picture.';
+        }
+    }
+
     /* ---- Delete account ---- */
     elseif ($action === 'delete') {
 
@@ -107,6 +134,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 require_once __DIR__ . '/../includes/header.php';
+
+$avatarUrl = customer_avatar_url($customer);
 ?>
 
 <section class="page-hero">
@@ -133,9 +162,15 @@ require_once __DIR__ . '/../includes/header.php';
 
                 <div class="account-user-card">
 
-                    <div class="account-avatar">
-                        <?= htmlspecialchars(strtoupper(substr($customer['FirstName'], 0, 1))); ?>
-                    </div>
+                    <?php if ($avatarUrl): ?>
+                        <div class="account-avatar account-avatar-img">
+                            <img src="<?= htmlspecialchars($avatarUrl); ?>?t=<?= time(); ?>" alt="<?= htmlspecialchars($customer['FirstName']); ?>">
+                        </div>
+                    <?php else: ?>
+                        <div class="account-avatar">
+                            <?= htmlspecialchars(strtoupper(substr($customer['FirstName'], 0, 1))); ?>
+                        </div>
+                    <?php endif; ?>
 
                     <h2>
                         <?= htmlspecialchars($customer['FirstName'] . ' ' . $customer['LastName']); ?>
@@ -184,6 +219,65 @@ require_once __DIR__ . '/../includes/header.php';
                         <strong>✅ <?= htmlspecialchars($notice); ?></strong>
                     </div>
                 <?php endif; ?>
+
+
+                <!-- ============ PROFILE PICTURE ============ -->
+                <section class="profile-card">
+
+                    <header class="profile-card-header">
+                        <h2>Profile Picture</h2>
+                        <p>Add a photo so we know who's coming.</p>
+                    </header>
+
+                    <div class="avatar-editor">
+
+                        <div class="avatar-preview">
+                            <?php if ($avatarUrl): ?>
+                                <img src="<?= htmlspecialchars($avatarUrl); ?>?t=<?= time(); ?>" alt="Your profile picture">
+                            <?php else: ?>
+                                <div class="avatar-initials">
+                                    <?= htmlspecialchars(strtoupper(substr($customer['FirstName'], 0, 1))); ?>
+                                </div>
+                            <?php endif; ?>
+                        </div>
+
+                        <div class="avatar-actions">
+
+                            <form method="post" action="/fetecation/account/profile.php"
+                                  enctype="multipart/form-data" class="avatar-upload-form">
+
+                                <input type="hidden" name="action" value="upload-avatar">
+
+                                <label class="avatar-upload-button">
+                                    <input type="file" name="avatar" accept="image/jpeg,image/png,image/gif,image/webp" required>
+                                    <span>📷 Choose Photo</span>
+                                </label>
+
+                                <button type="submit" class="primary-button">Upload</button>
+                            </form>
+
+                            <?php if ($avatarUrl): ?>
+                                <form method="post" action="/fetecation/account/profile.php"
+                                      onsubmit="return confirm('Remove your profile picture?');"
+                                      style="margin-top:10px;">
+
+                                    <input type="hidden" name="action" value="remove-avatar">
+
+                                    <button type="submit" class="danger-button-sm">
+                                        Remove Picture
+                                    </button>
+                                </form>
+                            <?php endif; ?>
+
+                            <p class="avatar-hint">
+                                JPG, PNG, GIF or WebP · max 2 MB
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </section>
 
 
                 <!-- ============ PROFILE DETAILS ============ -->

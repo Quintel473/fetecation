@@ -55,6 +55,8 @@ foreach ($myBookings as $b) {
 }
 
 require_once __DIR__ . '/../includes/header.php';
+
+$sideAvatar = customer_avatar_url($customer);
 ?>
 
 <section class="page-hero">
@@ -86,9 +88,15 @@ require_once __DIR__ . '/../includes/header.php';
 
                 <div class="account-user-card">
 
-                    <div class="account-avatar">
-                        <?= htmlspecialchars(strtoupper(substr($customer['FirstName'], 0, 1))); ?>
-                    </div>
+                    <?php if ($sideAvatar): ?>
+                        <div class="account-avatar account-avatar-img">
+                            <img src="<?= htmlspecialchars($sideAvatar); ?>?t=<?= time(); ?>" alt="<?= htmlspecialchars($customer['FirstName']); ?>">
+                        </div>
+                    <?php else: ?>
+                        <div class="account-avatar">
+                            <?= htmlspecialchars(strtoupper(substr($customer['FirstName'], 0, 1))); ?>
+                        </div>
+                    <?php endif; ?>
 
                     <h2>
                         <?= htmlspecialchars($customer['FirstName'] . ' ' . $customer['LastName']); ?>

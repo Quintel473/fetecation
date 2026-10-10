@@ -642,3 +642,124 @@ function customer_try_remember_login(): bool
    ========================================================= */
 
 customer_try_remember_login();
+
+/* =========================================================
+   PROFILE PICTURE
+   ========================================================= */
+
+const AVATAR_MAX_BYTES = 2097152;   // 2 MB
+const AVATAR_MAX_DIM   = 800;       // max width/height after resize
+
+/**
+ * Upload and store a new avatar for the customer.
+ * Returns ['ok' => bool, 'error' => string, 'path' => string]
+ */
+function customer_upload_avatar(int $customerId, array $file): array
+{
+    /* Basic validation */
+    if (empty($file['tmp_name']) || ($file['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_OK) {
+        return ['ok' => false, 'error' => 'No file was uploaded.'];
+    }
+
+    if ($file['size'] > AVATAR_MAX_BYTES) {
+        return ['ok' => false, 'error' => 'Image must be under 2 MB.'];
+    }
+
+    /* Verify it's a real image */
+    $info = @getimagesize($file['tmp_name']);
+    if (!$info) {
+        return ['ok' => false, 'error' => 'That file is not a valid image.'];
+    }
+
+    $allowed = [
+        IMAGETYPE_JPEG => 'jpg',
+        IMAGETYPE_PNG  => 'png',
+        IMAGETYPE_GIF  => 'gif',
+        IMAGETYPE_WEBP => 'webp',
+    ];
+
+    if (!isset($allowed[$info[2]])) {
+        return ['ok' => false, 'error' => 'Only JPG, PNG, GIF and WebP are allowed.'];
+    }
+
+    $ext = $allowed[$info[2]];
+
+    /* Ensure the upload directory exists */
+    $dir = dirname(__DIR__) . '/uploads/avatars';
+    if (!is_dir($dir)) {
+        @mkdir($dir, 0775, true);
+    }
+
+    /* Random filename, keeps original extension */
+    $filename = 'u' . $customerId . '_' . bin2hex(random_bytes(8)) . '.' . $ext;
+    $dest     = $dir . '/' . $filename;
+
+    if (!move_uploaded_file($file['tmp_name'], $dest)) {
+        return ['ok' => false, 'error' => 'Could not save the image.'];
+    }
+
+    /* Delete the previous avatar, if any */
+    try {
+        $stmt = db()->prepare('SELECT AvatarPath FROM customers WHERE CustomerID = ? LIMIT 1');
+        $stmt->execute([$customerId]);
+        $row = $stmt->fetch();
+
+        if (!empty($row['AvatarPath'])) {
+            $old = dirname(__DIR__) . '/uploads/avatars/' . basename($row['AvatarPath']);
+            if (is_file($old)) @unlink($old);
+        }
+    } catch (Throwable $e) { /* non-fatal */ }
+
+    /* Save the new path in the DB */
+    try {
+        $upd = db()->prepare('UPDATE customers SET AvatarPath = ? WHERE CustomerID = ?');
+        $upd->execute([$filename, $customerId]);
+    } catch (Throwable $e) {
+        @unlink($dest);
+        error_log('avatar save failed: ' . $e->getMessage());
+        return ['ok' => false, 'error' => 'Could not save the image.'];
+    }
+
+    return ['ok' => true, 'path' => $filename];
+}
+
+
+/**
+ * Remove the customer's avatar.
+ */
+function customer_remove_avatar(int $customerId): bool
+{
+    try {
+        $stmt = db()->prepare('SELECT AvatarPath FROM customers WHERE CustomerID = ? LIMIT 1');
+        $stmt->execute([$customerId]);
+        $row = $stmt->fetch();
+
+        if (!empty($row['AvatarPath'])) {
+            $file = dirname(__DIR__) . '/uploads/avatars/' . basename($row['AvatarPath']);
+            if (is_file($file)) @unlink($file);
+        }
+
+        $upd = db()->prepare('UPDATE customers SET AvatarPath = NULL WHERE CustomerID = ?');
+        $upd->execute([$customerId]);
+
+        return true;
+
+    } catch (Throwable $e) {
+        error_log('avatar remove failed: ' . $e->getMessage());
+        return false;
+    }
+}
+
+
+/**
+ * Get the public URL for a customer's avatar, or null.
+ */
+function customer_avatar_url(?array $customer): ?string
+{
+    if (empty($customer['AvatarPath'])) return null;
+
+    $file = dirname(__DIR__) . '/uploads/avatars/' . basename($customer['AvatarPath']);
+    if (!is_file($file)) return null;
+
+    return '/fetecation/uploads/avatars/' . rawurlencode($customer['AvatarPath']);
+}

@@ -1,0 +1,7 @@
+# Prevent PHP execution in uploads folder
+<FilesMatch "\.(php|phtml|php3|php4|php5|php7|phps|pl|py|jsp|asp|sh|cgi)$">
+    Require all denied
+</FilesMatch>
+
+# Only allow image files
+Options -Indexes
