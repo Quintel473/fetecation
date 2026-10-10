@@ -20,7 +20,7 @@ $TESTIMONIALS = [
         'name'     => 'James & Kate R.',
         'location' => 'London, UK',
         'rating'   => 5,
-        'text'     => 'We booked the Island Highlights Tour and it was the highlight of our trip. Our guide knew every hidden spot and made the day feel completely tailored to us.',
+        'text'     => 'We booked the Tipsy Tourist Tour and it was the highlight of our trip. Our guide knew every hidden spot and made the day feel completely tailored to us.',
     ],
 
     [

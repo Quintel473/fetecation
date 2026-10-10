@@ -343,3 +343,105 @@ function send_payment_link_email(array $booking): bool
         return false;
     }
 }
+
+/* =========================================================
+   MANUAL BOOKING — admin-created bookings (e.g. from WhatsApp)
+   ========================================================= */
+
+/**
+ * Send the customer a confirmation for a manually-created booking.
+ */
+function send_manual_booking_confirmation(array $booking, bool $withPaymentLink = false): bool
+{
+    try {
+        $mail = fete_mailer();
+        $mail->addAddress($booking['Email'], $booking['Name']);
+        $mail->addReplyTo(FETE_SMTP_TO, 'FeteCation Taxi & Tours');
+
+        $tourLabel = ($booking['TourSlug'] === 'taxi' || empty($booking['TourSlug']))
+                     ? 'Taxi Service'
+                     : ($booking['TourSlug'] ?: 'Tour');
+
+        $payOption = $booking['PaymentOption'] ?? 'on-day';
+        $payLabel = [
+            'full'    => 'Pay in full',
+            'deposit' => 'Pay ' . DEPOSIT_PERCENT . '% deposit',
+            'on-day'  => 'Pay on the day',
+        ][$payOption] ?? 'Pay on the day';
+
+        $mail->Subject = 'We got your booking — ' . $booking['Reference'];
+
+        $body =
+              "Hi {$booking['Name']},\n\n"
+            . "Thanks for booking with FeteCation!\n\n"
+            . "Here's a summary of your booking:\n\n"
+            . "Reference:    {$booking['Reference']}\n"
+            . "Experience:   {$tourLabel}\n"
+            . "Date:         {$booking['BookingDate']}\n"
+            . "Guests:       {$booking['NumberOfPassengers']}\n";
+
+        if (!empty($booking['PickupLocation'])) {
+            $body .= "Pickup:       {$booking['PickupLocation']}\n";
+        }
+        if (!empty($booking['Notes'])) {
+            $body .= "Notes:        {$booking['Notes']}\n";
+        }
+
+        $body .= "\nPayment:      {$payLabel}\n\n";
+
+        if ($withPaymentLink && $payOption !== 'on-day') {
+            $payUrl = 'http://localhost/fetecation/payment-start.php?ref=' . urlencode($booking['Reference']);
+            $body .=
+                  "Pay securely via PayPal here:\n\n"
+                . $payUrl . "\n\n";
+        }
+
+        $body .=
+              "If you need to change anything, just reply to this email\n"
+            . "or message us on WhatsApp:\n"
+            . "https://wa.me/14734560954\n\n"
+            . "See you soon,\n"
+            . "The FeteCation Team\n";
+
+        $mail->Body = $body;
+        $mail->send();
+        return true;
+
+    } catch (Throwable $e) {
+        error_log('Manual booking email failed: ' . $e->getMessage());
+        return false;
+    }
+}
+
+
+/**
+ * Notify the admin that a manual booking was created.
+ */
+function send_admin_manual_booking_notice(array $booking): bool
+{
+    try {
+        $mail = fete_mailer();
+        $mail->addAddress(FETE_SMTP_TO);
+
+        $mail->Subject = 'Manual booking created — ' . $booking['Reference'];
+
+        $mail->Body =
+              "A booking was created manually from the admin panel.\n\n"
+            . "Reference:    {$booking['Reference']}\n"
+            . "Source:       " . ($booking['Source'] ?? 'other') . "\n"
+            . "Customer:     {$booking['Name']}\n"
+            . "Email:        {$booking['Email']}\n"
+            . "Phone:        {$booking['Phone']}\n"
+            . "Date:         {$booking['BookingDate']}\n"
+            . "Guests:       {$booking['NumberOfPassengers']}\n"
+            . "Payment:      " . ($booking['PaymentOption'] ?? 'on-day') . "\n\n"
+            . "View in admin: http://localhost/fetecation/staff-7742/\n";
+
+        $mail->send();
+        return true;
+
+    } catch (Throwable $e) {
+        error_log('Admin manual booking notice failed: ' . $e->getMessage());
+        return false;
+    }
+}

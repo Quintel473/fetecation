@@ -4,6 +4,25 @@ require_once __DIR__ . '/../includes/database.php';
 require_once __DIR__ . '/../includes/mailer.php';
 require_once __DIR__ . '/../includes/paypal.php';
 
+
+/**
+ * Redirect back to the dashboard, preserving the caller's page
+ * (?bpage=2&mpage=1) if it was passed in ?return=...
+ */
+function admin_redirect_back(): void
+{
+    $base = '/fetecation/staff-7742/index.php';
+    $qs   = $_GET['return'] ?? '';
+
+    if ($qs !== '' && preg_match('/^\?[a-zA-Z0-9_=&]+$/', $qs)) {
+        header('Location: ' . $base . $qs);
+    } else {
+        header('Location: ' . $base);
+    }
+    exit;
+}
+
+
 /* ---------------------------------------------------------
    Parse + validate
    --------------------------------------------------------- */
@@ -12,18 +31,15 @@ $action = $_GET['action'] ?? '';
 $id     = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 
 if (!in_array($type, ['booking', 'message'], true)) {
-    header('Location: /fetecation/staff-7742/index.php');
-    exit;
+    admin_redirect_back();
 }
 
 if (!in_array($action, ['confirm', 'cancel', 'delete', 'send-payment'], true)) {
-    header('Location: /fetecation/staff-7742/index.php');
-    exit;
+    admin_redirect_back();
 }
 
 if ($id < 1) {
-    header('Location: /fetecation/staff-7742/index.php');
-    exit;
+    admin_redirect_back();
 }
 
 /* ---------------------------------------------------------
@@ -46,15 +62,13 @@ try {
             $booking = $lookup->fetch();
 
             if (!$booking) {
-                header('Location: /fetecation/staff-7742/index.php');
-                exit;
+                admin_redirect_back();
             }
 
             /* ---- Send payment link ---- */
             if ($action === 'send-payment') {
                 send_payment_link_email($booking);
-                header('Location: /fetecation/staff-7742/index.php');
-                exit;
+                admin_redirect_back();
             }
 
             /* ---- Confirm / Cancel ---- */
@@ -87,5 +101,4 @@ try {
     error_log('admin action failed: ' . $e->getMessage());
 }
 
-header('Location: /fetecation/staff-7742/index.php');
-exit;
+admin_redirect_back();

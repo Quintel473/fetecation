@@ -3862,3 +3862,75 @@ img {
     object-fit: cover;
     display: block;
 }
+
+/* =========================================================
+   LIVE PRICE PREVIEW — booking form
+   ========================================================= */
+
+.price-preview {
+    background: linear-gradient(135deg, #fff8f2 0%, #fffdfa 100%);
+    border: 1px solid var(--fete-border);
+    border-left: 4px solid var(--fete-orange);
+    border-radius: 12px;
+    padding: 20px 22px;
+    margin: 6px 0 22px;
+    transition: var(--transition);
+}
+
+.price-preview-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    padding-bottom: 14px;
+    border-bottom: 1px dashed var(--fete-border);
+    margin-bottom: 12px;
+}
+
+.price-preview-label {
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 1.6px;
+    text-transform: uppercase;
+    color: var(--fete-gray);
+}
+
+.price-preview-total {
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--fete-orange-dark);
+    letter-spacing: -0.5px;
+    line-height: 1;
+}
+
+.price-preview-breakdown {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.pp-line {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    font-size: 14px;
+    color: var(--fete-gray);
+}
+
+.pp-line > span:first-child {
+    flex-shrink: 0;
+}
+
+.pp-line > span:last-child {
+    text-align: right;
+    white-space: nowrap;
+}
+
+.pp-line-strong {
+    color: var(--fete-dark);
+    font-weight: 700;
+    font-size: 15px;
+    padding-top: 8px;
+    border-top: 1px solid var(--fete-border);
+    margin-top: 4px;
+}

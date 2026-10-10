@@ -17,14 +17,14 @@
 const PAYPAL_MODE          = 'sandbox';                              // 'sandbox' or 'live'
 const PAYPAL_CLIENT_ID     = 'PAYPAL_CLIENT_ID_PLACEHOLDER';         // ← replace
 const PAYPAL_SECRET        = 'PAYPAL_SECRET_PLACEHOLDER';            // ← replace
-const PAYPAL_BUSINESS_EMAIL= 'quintelcharles@gmail.com';             // ← your PayPal business email
+const PAYPAL_BUSINESS_EMAIL= 'qunitelcharles@gmail.com';             // ← your PayPal business email
 const PAYPAL_CURRENCY      = 'USD';                                  // USD or XCD
 
 const PAYPAL_RETURN_URL    = 'http://localhost/fetecation/payment-success.php';
 const PAYPAL_CANCEL_URL    = 'http://localhost/fetecation/payment-cancelled.php';
 const PAYPAL_WEBHOOK_URL   = 'http://localhost/fetecation/paypal-webhook.php';
 
-const DEPOSIT_PERCENT      = 20;   // 20% deposit option
+const DEPOSIT_PERCENT      = 40;   // 40% deposit option
 
 /* ============ API ENDPOINTS ============ */
 
@@ -184,19 +184,34 @@ function paypal_capture_order(string $orderId): array
 
 /**
  * Calculate the amount to charge based on payment option.
+ *
+ * Reads prices from tours-data.php (single source of truth).
+ * Returns the amount in PayPal currency units (e.g. USD).
  */
 function paypal_calculate_amount(string $tourSlug, int $guests, string $option): float
 {
-    /* Base price per person — replace with your real prices */
-    $basePrice = 120.00;   // default per-person price
-
-    $total = $basePrice * max(1, $guests);
-
-    if ($option === 'deposit') {
-        return round($total * (DEPOSIT_PERCENT / 100), 2);
+    /* Ensure tour data is loaded */
+    if (!function_exists('fete_calculate_booking_totals')) {
+        require_once __DIR__ . '/../tours-data.php';
     }
 
-    return round($total, 2);
+    $totals = fete_calculate_booking_totals($tourSlug, $guests);
+
+    /* Custom tour — nothing to charge online */
+    if (!empty($totals['is_custom']) || $totals['total'] === null) {
+        return 0.00;
+    }
+
+    if ($option === 'deposit') {
+        return (float)$totals['deposit'];
+    }
+
+    /* For 'on-day' option we don't actually charge — return 0 so nothing is sent to PayPal */
+    if ($option === 'on-day') {
+        return 0.00;
+    }
+
+    return (float)$totals['total'];
 }
 
 

@@ -7,15 +7,17 @@
 $TOURS = [
 
     'island-highlights' => [
-        'name'        => 'Island Highlights Tour',
-        'tag'         => 'POPULAR',
-        'tagline'     => 'See the best of the island in one unforgettable day.',
-        'emoji'       => '🌅',
-        'image'       => '/fetecation/images/tours/island-highlights-1.jpg',
-        'duration'    => '4–6 hours',
-        'group'       => 'Up to 6 people',
-        'price'       => 'From $120 / person',
-        'pickup'      => 'Hotel or cruise port',
+        'name'             => 'Tipsy Tourist Tour',
+        'tag'              => 'POPULAR',
+        'tagline'          => 'See the best of the island in one unforgettable day.',
+        'emoji'            => '🌅',
+        'image'            => '/fetecation/images/tours/island-highlights-1.jpg',
+        'duration'         => '4–6 hours',
+        'group'            => 'Up to 6 people',
+        'price'            => 'From $120 / person',   // display string
+        'price_per_person' => 120.00,                  // calculation
+        'price_type'       => 'per_person',            // per_person | custom
+        'pickup'           => 'Hotel or cruise port',
 
         'about' => [
             'Discover the island\'s most beautiful spots on a relaxed, private tour designed around you.',
@@ -50,15 +52,17 @@ $TOURS = [
     ],
 
     'nature-adventure' => [
-        'name'        => 'Nature & Adventure',
-        'tag'         => 'EXPERIENCE',
-        'tagline'     => 'Get off the beaten path and into the wild.',
-        'emoji'       => '🌴',
-        'image'       => '/fetecation/images/tours/nature-adventure-1.jpg',
-        'duration'    => '5–7 hours',
-        'group'       => 'Up to 6 people',
-        'price'       => 'From $150 / person',
-        'pickup'      => 'Hotel or cruise port',
+        'name'             => 'Nature & Adventure',
+        'tag'              => 'EXPERIENCE',
+        'tagline'          => 'Get off the beaten path and into the wild.',
+        'emoji'            => '🌴',
+        'image'            => '/fetecation/images/tours/nature-adventure-1.jpg',
+        'duration'         => '5–7 hours',
+        'group'            => 'Up to 6 people',
+        'price'            => 'From $150 / person',
+        'price_per_person' => 150.00,
+        'price_type'       => 'per_person',
+        'pickup'           => 'Hotel or cruise port',
 
         'about' => [
             'For those who want more than a beach day — this tour takes you deep into the island\'s natural beauty.',
@@ -93,15 +97,17 @@ $TOURS = [
     ],
 
     'custom-island' => [
-        'name'        => 'Custom Island Experience',
-        'tag'         => 'CUSTOM',
-        'tagline'     => 'Your island, your way — built around what you love.',
-        'emoji'       => '🌅',
-        'image'       => '/fetecation/images/tours/custom-island-1.jpg',
-        'duration'    => 'Custom schedule',
-        'group'       => 'Up to 12 people',
-        'price'       => 'Custom quote',
-        'pickup'      => 'Anywhere on the island',
+        'name'             => 'Custom Island Experience',
+        'tag'              => 'CUSTOM',
+        'tagline'          => 'Your island, your way — built around what you love.',
+        'emoji'            => '🌅',
+        'image'            => '/fetecation/images/tours/custom-island-1.jpg',
+        'duration'         => 'Custom schedule',
+        'group'            => 'Up to 12 people',
+        'price'            => 'Custom quote',
+        'price_per_person' => null,                    // custom → no fixed price
+        'price_type'       => 'custom',
+        'pickup'           => 'Anywhere on the island',
 
         'about' => [
             'Want something completely different? Tell us what you\'re dreaming of and we\'ll build the perfect day around it — no fixed itinerary, no rushing, no compromises.',
@@ -171,4 +177,115 @@ function fete_tour($slug) {
 function fete_all_tours() {
     global $TOURS;
     return $TOURS;
+}
+
+/**
+ * Return the payment options allowed for a given tour slug.
+ */
+function fete_tour_payment_options(string $slug): array
+{
+    /* Tours that require payment upfront (no on-day) */
+    $paidOnly = ['island-highlights'];
+
+    if (in_array($slug, $paidOnly, true)) {
+        return ['full', 'deposit'];
+    }
+
+    return ['full', 'deposit', 'on-day'];
+}
+
+/**
+ * Look up a tour's price data by slug.
+ * Returns ['type' => 'per_person'|'per_trip'|'custom', 'amount' => float|null]
+ */
+function fete_tour_price(string $slug): array
+{
+    /* Taxi is a fixed-price service, not in $TOURS */
+    if ($slug === 'taxi') {
+        return [
+            'type'   => 'per_person',
+            'amount' => 40.00,   // ← change to your real taxi price
+        ];
+    }
+
+    $tour = fete_tour($slug);
+
+    if (!$tour) {
+        return ['type' => 'custom', 'amount' => null];
+    }
+
+    return [
+        'type'   => $tour['price_type'] ?? 'per_person',
+        'amount' => $tour['price_per_person'] ?? null,
+    ];
+}
+
+/**
+ * Calculate total + deposit + due-on-day for a booking.
+ * Returns an array of floats, or nulls if the price is custom.
+ */
+function fete_calculate_booking_totals(string $slug, int $guests): array
+{
+    $price = fete_tour_price($slug);
+
+    if ($price['type'] === 'custom' || $price['amount'] === null) {
+        return [
+            'total'        => null,
+            'deposit'      => null,
+            'due_on_day'   => null,
+            'per_person'   => null,
+            'guests'       => max(1, $guests),
+            'is_custom'    => true,
+        ];
+    }
+
+    $guests = max(1, $guests);
+    $total  = round($price['amount'] * $guests, 2);
+    $deposit = round($total * (DEPOSIT_PERCENT / 100), 2);
+
+    return [
+        'total'      => $total,
+        'deposit'    => $deposit,
+        'due_on_day' => round($total - $deposit, 2),
+        'per_person' => $price['amount'],
+        'guests'     => $guests,
+        'is_custom'  => false,
+    ];
+}
+
+/**
+ * Generate a unique booking reference.
+ * Format: 6-char uppercase hex (e.g. A3F9C1)
+ */
+function fete_generate_reference(): string
+{
+    return strtoupper(bin2hex(random_bytes(3)));
+}
+
+/**
+ * Calculate booking totals with an optional custom price override.
+ * If $customPrice is set (> 0), it overrides the per-person total.
+ */
+function fete_booking_totals_with_override(string $slug, int $guests, ?float $customPrice = null): array
+{
+    $guests = max(1, $guests);
+
+    if ($customPrice !== null && $customPrice > 0) {
+        $total = round($customPrice, 2);
+        $deposit = round($total * (DEPOSIT_PERCENT / 100), 2);
+
+        return [
+            'total'      => $total,
+            'deposit'    => $deposit,
+            'due_on_day' => round($total - $deposit, 2),
+            'per_person' => null,
+            'guests'     => $guests,
+            'is_custom'  => false,
+            'is_override'=> true,
+        ];
+    }
+
+    $base = fete_calculate_booking_totals($slug, $guests);
+    $base['is_override'] = false;
+    return $base;
 }

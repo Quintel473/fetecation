@@ -15,7 +15,6 @@ $errors = [];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-    // ---- Collect + trim inputs ----
     $name          = trim($_POST['name']            ?? '');
     $email         = trim($_POST['email']           ?? '');
     $phone         = trim($_POST['phone']           ?? '');
@@ -24,7 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $pickup        = trim($_POST['pickup']          ?? '');
     $notes         = trim($_POST['notes']           ?? '');
     $tour          = trim($_POST['tour']            ?? 'taxi');
-    $paymentOption = trim($_POST['payment_option']  ?? 'on-day');
+    $paymentOption = trim($_POST['payment_option']  ?? 'full');
 
     // ---- Validate ----
     if ($name === '')    $errors[] = 'Please enter your name.';
@@ -34,25 +33,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($date === '')    $errors[] = 'Please choose a date.';
     if ($guests === '' || (int)$guests < 1)
                          $errors[] = 'Please choose how many guests.';
-    if (!in_array($paymentOption, ['full', 'deposit', 'on-day'], true))
-                         $paymentOption = 'on-day';
+
+    $allowedPayOptions = fete_tour_payment_options($tour);
+    if (!in_array($paymentOption, $allowedPayOptions, true)) {
+        $paymentOption = $allowedPayOptions[0] ?? 'full';
+    }
+
     if (empty($_POST['agree']))
                          $errors[] = 'Please agree to the Terms of Service and Privacy Policy.';
 
-    // ---- If valid: save + email + redirect ----
     if (empty($errors)) {
 
         $reference   = strtoupper(bin2hex(random_bytes(3)));
         $submittedAt = date('Y-m-d H:i:s');
 
-        // Friendly tour name
         $tourName = 'Taxi Service';
         if ($tour !== 'taxi') {
             $t = fete_tour($tour);
             if ($t) $tourName = $t['name'];
         }
 
-        // Link to logged-in customer, if any
         $customerId = null;
         if (customer_is_logged_in()) {
             $current = customer_current();
@@ -81,11 +81,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // ---- Save to MySQL ----
         try {
             $bookingType = ($tour === 'taxi') ? 'Taxi' : 'Tour';
-
-            /* We use TourSlug as the identifier — no TourID lookup needed */
             $tourId = null;
 
-            /* PaymentOption column — add this to the INSERT */
             $stmt = $pdo->prepare(
                 'INSERT INTO bookings
                     (Reference, Name, Email, Phone,
@@ -124,7 +121,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $errors[] = 'Could not save your booking. Please try again.';
         }
 
-        // ---- Backup to disk ----
         if (empty($errors)) {
             $dir = __DIR__ . '/data/bookings';
             if (!is_dir($dir)) {
@@ -135,25 +131,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         if (empty($errors)) {
-            // ---- Send emails ----
             send_booking_notification($booking);
             send_customer_confirmation($booking);
 
-            // ---- Redirect (POST → GET pattern) ----
             header('Location: /fetecation/booking-success.php?ref=' . urlencode($reference));
             exit;
         }
     }
 }
 
-/* ---------------------------------------------------------
-   Preselect tour from query string (?tour=...)
-   --------------------------------------------------------- */
 $selectedTour = isset($_GET['tour']) ? htmlspecialchars($_GET['tour']) : '';
 
-/* ---------------------------------------------------------
-   Prefill from logged-in customer, if applicable
-   --------------------------------------------------------- */
 $prefillName  = $_POST['name']  ?? '';
 $prefillEmail = $_POST['email'] ?? '';
 $prefillPhone = $_POST['phone'] ?? '';
@@ -166,6 +154,14 @@ if (customer_is_logged_in() && empty($_POST)) {
         $prefillPhone = $prefillPhone ?: ($me['Phone'] ?? '');
     }
 }
+
+/* Build a JSON map of prices for the JS live preview */
+$tourPricesForJs = [
+    'taxi'              => ['type' => 'per_person', 'amount' => 40.00],
+    'island-highlights' => ['type' => 'per_person', 'amount' => 120.00],
+    'nature-adventure'  => ['type' => 'per_person', 'amount' => 150.00],
+    'custom-island'     => ['type' => 'custom',     'amount' => null],
+];
 
 require_once __DIR__ . "/includes/header.php";
 
@@ -345,16 +341,34 @@ require_once __DIR__ . "/includes/header.php";
                 <div class="form-group">
                     <label for="payment_option">Payment option *</label>
                     <select id="payment_option" name="payment_option" required>
+
                         <option value="full" <?= ($_POST['payment_option'] ?? '') === 'full' ? 'selected' : ''; ?>>
                             Pay in full now
                         </option>
+
                         <option value="deposit" <?= ($_POST['payment_option'] ?? '') === 'deposit' ? 'selected' : ''; ?>>
                             Pay <?= DEPOSIT_PERCENT; ?>% deposit now, rest on the day
                         </option>
+
                         <option value="on-day" <?= ($_POST['payment_option'] ?? 'on-day') === 'on-day' ? 'selected' : ''; ?>>
                             Pay on the day
                         </option>
+
                     </select>
+
+                    <small class="form-hint" id="payment-hint"></small>
+                </div>
+
+                <!-- ============ LIVE PRICE PREVIEW ============ -->
+                <div class="price-preview" id="pricePreview" style="display:none;">
+
+                    <div class="price-preview-header">
+                        <span class="price-preview-label">Your total</span>
+                        <strong class="price-preview-total" id="ppTotal">$0</strong>
+                    </div>
+
+                    <div class="price-preview-breakdown" id="ppBreakdown"></div>
+
                 </div>
 
                 <div class="form-group form-group-checkbox">
@@ -379,6 +393,123 @@ require_once __DIR__ . "/includes/header.php";
 
     </div>
 </section>
+
+
+<script>
+(function () {
+    'use strict';
+
+    var tourSelect  = document.getElementById('tour');
+    var guestsInput = document.getElementById('guests');
+    var paySelect   = document.getElementById('payment_option');
+    var hint        = document.getElementById('payment-hint');
+    var previewBox  = document.getElementById('pricePreview');
+    var totalEl     = document.getElementById('ppTotal');
+    var breakdownEl = document.getElementById('ppBreakdown');
+
+    if (!tourSelect || !paySelect) return;
+
+    /* Prices — must match tours-data.php */
+    var tourPrices = <?= json_encode($tourPricesForJs); ?>;
+
+    /* Payment options allowed per tour */
+    var tourPaymentRules = {
+        'island-highlights': ['full', 'deposit'],
+        'taxi':              ['full', 'deposit', 'on-day'],
+        'nature-adventure':  ['full', 'deposit', 'on-day'],
+        'custom-island':     ['full', 'deposit', 'on-day']
+    };
+
+    var depositPercent = <?= (int)DEPOSIT_PERCENT; ?>;
+
+    function formatMoney(n) {
+        var s = (Math.round(n * 100) / 100).toFixed(2);
+        if (s.endsWith('.00')) s = s.slice(0, -3);
+        return '$' + s;
+    }
+
+    function updatePaymentOptions() {
+
+        var tour    = tourSelect.value;
+        var allowed = tourPaymentRules[tour] || ['full', 'deposit', 'on-day'];
+
+        var options = paySelect.querySelectorAll('option');
+        var currentStillValid = false;
+
+        options.forEach(function (opt) {
+            var val = opt.value;
+            var isAllowed = allowed.indexOf(val) !== -1;
+            opt.hidden   = !isAllowed;
+            opt.disabled = !isAllowed;
+            if (isAllowed && val === paySelect.value) {
+                currentStillValid = true;
+            }
+        });
+
+        if (!currentStillValid) {
+            paySelect.value = allowed[0];
+        }
+
+        if (hint) {
+            if (allowed.indexOf('on-day') === -1) {
+                hint.textContent = 'This tour requires payment or a deposit to confirm your booking.';
+                hint.style.color = '#c94f2c';
+            } else {
+                hint.textContent = '';
+            }
+        }
+    }
+
+    function updatePreview() {
+
+        if (!previewBox || !totalEl || !breakdownEl) return;
+
+        var tour    = tourSelect.value;
+        var guests  = parseInt(guestsInput.value, 10) || 1;
+        var option  = paySelect.value;
+        var price   = tourPrices[tour];
+
+        if (!price || price.type === 'custom' || price.amount === null) {
+            previewBox.style.display = 'none';
+            return;
+        }
+
+        previewBox.style.display = 'block';
+
+        var total   = price.amount * guests;
+        var deposit = total * (depositPercent / 100);
+        var due     = total - deposit;
+
+        totalEl.textContent = formatMoney(total);
+
+        var html = '';
+        html += '<div class="pp-line"><span>' + guests + ' × ' + formatMoney(price.amount) + '</span><span>' + formatMoney(total) + '</span></div>';
+
+        if (option === 'deposit') {
+            html += '<div class="pp-line pp-line-strong"><span>Pay now (' + depositPercent + '%)</span><span>' + formatMoney(deposit) + '</span></div>';
+            html += '<div class="pp-line"><span>Due on the day</span><span>' + formatMoney(due) + '</span></div>';
+        } else if (option === 'on-day') {
+            html += '<div class="pp-line"><span>Due on the day</span><span>' + formatMoney(total) + '</span></div>';
+        } else {
+            html += '<div class="pp-line pp-line-strong"><span>Pay now</span><span>' + formatMoney(total) + '</span></div>';
+        }
+
+        breakdownEl.innerHTML = html;
+    }
+
+    function updateAll() {
+        updatePaymentOptions();
+        updatePreview();
+    }
+
+    tourSelect.addEventListener('change', updateAll);
+    guestsInput.addEventListener('input', updateAll);
+    paySelect.addEventListener('change', updateAll);
+
+    updateAll();
+
+})();
+</script>
 
 
 <?php require_once __DIR__ . "/includes/footer.php"; ?>
