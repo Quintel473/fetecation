@@ -4,6 +4,11 @@ if (!isset($pageTitle)) {
     $pageTitle = "FeteCation Taxi & Tours";
 }
 
+/* Load customer session state if available (for the nav link) */
+if (file_exists(__DIR__ . '/customer-auth.php')) {
+    require_once __DIR__ . '/customer-auth.php';
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -48,6 +53,20 @@ if (!isset($pageTitle)) {
             <a href="/fetecation/about.php">About</a>
 
             <a href="/fetecation/contact.php">Contact</a>
+
+            <?php if (function_exists('customer_is_logged_in') && customer_is_logged_in()): ?>
+
+                <a href="/fetecation/account/index.php" class="nav-account-link">
+                    👤 My Account
+                </a>
+
+            <?php else: ?>
+
+                <a href="/fetecation/login.php" class="nav-account-link">
+                    Sign In
+                </a>
+
+            <?php endif; ?>
 
             <a href="/fetecation/booking.php" class="nav-book-button">
                 Book Now

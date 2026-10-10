@@ -1,6 +1,6 @@
 <?php
 /**
- * Mailer helper — sends booking + contact emails via Gmail SMTP + PHPMailer.
+ * Mailer helper — sends booking + contact + account emails via Gmail SMTP + PHPMailer.
  */
 
 use PHPMailer\PHPMailer\PHPMailer;
@@ -166,5 +166,38 @@ function send_contact_autoreply($contact)
 
     } catch (Exception $e) {
         error_log('Contact autoreply failed: ' . $mail->ErrorInfo);
+    }
+}
+
+
+/* =========================================================
+   ACCOUNT EMAILS — admin notifications
+   ========================================================= */
+
+function send_admin_new_customer_notification(array $customer): bool
+{
+    try {
+        $mail = fete_mailer();
+        $mail->addAddress(FETE_SMTP_TO);
+        $mail->addReplyTo($customer['email'], $customer['name']);
+
+        $mail->Subject = 'New Customer Signup — ' . $customer['name'];
+
+        $mail->Body =
+              "A new customer just created an account.\n\n"
+            . "Name:      {$customer['name']}\n"
+            . "Email:     {$customer['email']}\n"
+            . "Phone:     " . ($customer['phone'] ?: '—') . "\n"
+            . "Signed up: {$customer['submitted_at']}\n"
+            . "Verified:  No (waiting on email confirmation)\n\n"
+            . "View customer in admin panel:\n"
+            . "http://localhost/fetecation/staff-7742/index.php\n";
+
+        $mail->send();
+        return true;
+
+    } catch (Throwable $e) {
+        error_log('Admin signup notification failed: ' . $e->getMessage());
+        return false;
     }
 }

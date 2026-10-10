@@ -53,10 +53,16 @@
         <p>
             &copy; <?= date("Y"); ?> FeteCation Taxi & Tours.
             All Rights Reserved.
+        </p>
+
+        <p class="footer-legal-links">
+            <a href="/fetecation/privacy.php">Privacy Policy</a>
             <span class="footer-sep">·</span>
-                <a href="/fetecation/staff-7742/login.php" class="footer-staff-link">
-                    Staff Login
-                </a>
+            <a href="/fetecation/terms.php">Terms of Service</a>
+            <span class="footer-sep">·</span>
+            <a href="/fetecation/staff-7742/login.php" class="footer-staff-link">
+                Staff Login
+            </a>
         </p>
 
     </div>

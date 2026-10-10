@@ -126,7 +126,7 @@ require_once __DIR__ . "/includes/header.php";
 
                 <div>
                     <h3>Email</h3>
-                    <p>quintelcharles@gmail.com</p>
+                    <p>qunitelcharles@gmail.com</p>
                 </div>
 
             </div>
@@ -140,7 +140,7 @@ require_once __DIR__ . "/includes/header.php";
 
                 <div>
                     <h3>Location</h3>
-                    <p>Grenada, Caribbean</p>
+                    <p>Grenada</p>
                 </div>
 
             </div>
