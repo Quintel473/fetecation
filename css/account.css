@@ -592,44 +592,82 @@
 }
 
 /* =========================================================
-   TERMS CHECKBOX
+   TERMS CHECKBOX (register page)
    ========================================================= */
 
 .acct-terms-field {
-    margin-top: 4px;
-    margin-bottom: 22px;
+    margin: 6px 0 22px 0;
+    padding: 0;
+    width: 100%;
+    box-sizing: border-box;
 }
 
-.acct-terms-label {
-    display: flex;
+.acct-field .acct-terms-label {
+    display: flex !important;
+    flex-direction: row;
     align-items: flex-start;
+    justify-content: flex-start;
     gap: 10px;
-    font-size: 13.5px;
-    color: var(--acct-gray);
-    line-height: 1.5;
-    cursor: pointer;
-    font-weight: 400;
-    text-transform: none;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    margin: 0 !important;
+    padding: 0;
+    font-size: 14px;
+    font-weight: 500;
+    font-style: normal;
+    text-transform: none !important;
     letter-spacing: 0;
+    color: #666;
+    text-align: left;
+    cursor: pointer;
+    line-height: 1.5;
+    white-space: normal;
+    overflow: visible;
 }
 
-.acct-terms-label input[type="checkbox"] {
+.acct-field .acct-terms-label input[type="checkbox"] {
     width: 18px;
     height: 18px;
-    accent-color: var(--acct-orange);
-    margin-top: 2px;
-    flex-shrink: 0;
+    min-width: 18px;
+    max-width: 18px;
+    flex: 0 0 18px;
+    margin: 2px 0 0 0;
+    padding: 0;
+    accent-color: var(--acct-orange, #e9783f);
     cursor: pointer;
+    position: static;
+    top: auto;
+    left: auto;
+    transform: none;
+    appearance: auto;
+    -webkit-appearance: checkbox;
 }
 
-.acct-terms-label a {
-    color: var(--acct-orange-dark);
+.acct-field .acct-terms-label > span {
+    display: inline;
+    flex: 1 1 auto;
+    min-width: 0;
+    font-size: 14px;
+    font-weight: 500;
+    font-style: normal;
+    text-transform: none !important;
+    letter-spacing: 0;
+    color: #666;
+    line-height: 1.5;
+    white-space: normal;
+    overflow-wrap: break-word;
+    text-align: left;
+}
+
+.acct-field .acct-terms-label a {
+    color: var(--acct-orange-dark, #c94f2c);
     font-weight: 700;
     text-decoration: underline;
 }
 
-.acct-terms-label a:hover {
-    color: var(--acct-burgundy);
+.acct-field .acct-terms-label a:hover {
+    color: var(--acct-burgundy, #7b302d);
 }
 
 /* =========================================================
@@ -637,30 +675,67 @@
    ========================================================= */
 
 .acct-remember-field {
-    margin-top: -6px;
-    margin-bottom: 20px;
+    margin: 6px 0 22px 0;
+    padding: 0;
+    width: 100%;
+    box-sizing: border-box;
 }
 
-.acct-remember-label {
-    display: flex;
+.acct-field .acct-remember-label {
+    display: flex !important;
+    flex-direction: row;
     align-items: center;
+    justify-content: flex-start;
     gap: 10px;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    margin: 0 !important;
+    padding: 0;
     font-size: 14px;
-    color: var(--acct-gray);
-    cursor: pointer;
-    font-weight: 400;
-    text-transform: none;
+    font-weight: 500;
+    font-style: normal;
+    text-transform: none !important;
     letter-spacing: 0;
+    color: #666;
+    text-align: left;
+    cursor: pointer;
+    line-height: 1.4;
+    white-space: normal;
+    overflow: visible;
 }
 
-.acct-remember-label input[type="checkbox"] {
+.acct-field .acct-remember-label input[type="checkbox"] {
     width: 18px;
     height: 18px;
-    accent-color: var(--acct-orange);
-    flex-shrink: 0;
+    min-width: 18px;
+    max-width: 18px;
+    flex: 0 0 18px;
+    margin: 0;
+    padding: 0;
+    accent-color: var(--acct-orange, #e9783f);
     cursor: pointer;
+    position: static;
+    top: auto;
+    left: auto;
+    transform: none;
+    appearance: auto;
+    -webkit-appearance: checkbox;
 }
 
-.acct-remember-label span {
+.acct-field .acct-remember-label span,
+.acct-field .acct-remember-label > span {
+    display: inline;
+    flex: 1 1 auto;
+    min-width: 0;
+    font-size: 14px;
+    font-weight: 500;
+    font-style: normal;
+    text-transform: none !important;
+    letter-spacing: 0;
+    color: #666;
     line-height: 1.4;
+    white-space: normal;
+    overflow-wrap: break-word;
+    text-align: left;
 }
