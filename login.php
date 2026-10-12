@@ -132,7 +132,7 @@ if (isset($_GET['deleted']))    $notice = 'Your account has been deleted. We\'re
 
                     <div class="acct-field">
                         <label for="password">Password</label>
-                        <div class="acct-input-wrap">
+                        <div class="acct-input-wrap has-toggle">
                             <span class="acct-input-icon">🔒</span>
                             <input
                                 type="password"
@@ -141,6 +141,19 @@ if (isset($_GET['deleted']))    $notice = 'Your account has been deleted. We\'re
                                 required
                                 placeholder="Your password"
                             >
+                            <button type="button"
+                                    class="password-toggle"
+                                    aria-label="Show password"
+                                    onclick="togglePassword(this)">
+                                <svg class="icon-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                                    <circle cx="12" cy="12" r="3"/>
+                                </svg>
+                                <svg class="icon-eye-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
+                                    <line x1="1" y1="1" x2="23" y2="23"/>
+                                </svg>
+                            </button>
                         </div>
                     </div>
 
@@ -173,6 +186,20 @@ if (isset($_GET['deleted']))    $notice = 'Your account has been deleted. We\'re
         </main>
 
     </div>
+
+
+    <script>
+    function togglePassword(btn) {
+        var wrap = btn.closest('.acct-input-wrap, .login-input-wrap');
+        if (!wrap) return;
+        var input = wrap.querySelector('input');
+        if (!input) return;
+
+        var isVisible = btn.classList.toggle('is-visible');
+        input.type = isVisible ? 'text' : 'password';
+        btn.setAttribute('aria-label', isVisible ? 'Hide password' : 'Show password');
+    }
+    </script>
 
 </body>
 </html>

@@ -156,7 +156,7 @@ require_once __DIR__ . "/includes/header.php";
                     Back to Home
                 </a>
 
-                <a href="https://wa.me/14734560954?text=Hi%20FeteCation!%20I%20just%20submitted%20a%20booking%20(Ref%3A%20<?= urlencode($ref); ?>)"
+                <a href="https://wa.me/14734597407?text=Hi%20FeteCation!%20I%20just%20submitted%20a%20booking%20(Ref%3A%20<?= urlencode($ref); ?>)"
                    class="secondary-button"
                    target="_blank"
                    rel="noopener">

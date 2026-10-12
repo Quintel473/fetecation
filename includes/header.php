@@ -93,7 +93,7 @@ if (file_exists(__DIR__ . '/customer-auth.php')) {
         },
         "priceRange": "$$",
         "sameAs": [
-            "https://wa.me/14734560954"
+            "https://wa.me/14734597407"
         ]
     }
     </script>

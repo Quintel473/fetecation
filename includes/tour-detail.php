@@ -152,11 +152,11 @@ require __DIR__ . '/header.php';
                         Call or message us.
                     </p>
 
-                    <a href="tel:+14734560954" class="tour-contact-link">
+                    <a href="tel:+14734597407" class="tour-contact-link">
                         📞 +1 (473) 456-0954
                     </a>
 
-                    <a href="https://wa.me/14734560954?text=Hi%20FeteCation!%20I'm%20interested%20in%20the%20<?= urlencode($tour['name']); ?>"
+                    <a href="https://wa.me/14734597407?text=Hi%20FeteCation!%20I'm%20interested%20in%20the%20<?= urlencode($tour['name']); ?>"
                        class="tour-contact-link"
                        target="_blank"
                        rel="noopener">

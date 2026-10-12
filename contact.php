@@ -137,7 +137,7 @@ require_once __DIR__ . "/includes/header.php";
 
                 <div>
                     <h3>Phone</h3>
-                    <p>+1 473 456-0954</p>
+                    <p>+1 473 459-7404</p>
                 </div>
 
             </div>
@@ -180,7 +180,7 @@ require_once __DIR__ . "/includes/header.php";
                 <div>
                     <h3>WhatsApp</h3>
                     <p>
-                        <a href="https://wa.me/14734560954?text=Hi%20FeteCation!%20I%20have%20a%20question."
+                        <a href="https://wa.me/14734597407?text=Hi%20FeteCation!%20I%20have%20a%20question."
                            target="_blank"
                            rel="noopener"
                            style="color:var(--fete-orange-dark);font-weight:700;">

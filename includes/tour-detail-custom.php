@@ -166,11 +166,11 @@ require __DIR__ . '/header.php';
                         Reach out directly.
                     </p>
 
-                    <a href="tel:+14734560954" class="tour-contact-link">
+                    <a href="tel:+14734597407" class="tour-contact-link">
                         📞 +1 (473) 456-0954
                     </a>
 
-                    <a href="https://wa.me/14734560954?text=Hi%20FeteCation!%20I'd%20like%20to%20plan%20a%20custom%20island%20experience."
+                    <a href="https://wa.me/14734597407?text=Hi%20FeteCation!%20I'd%20like%20to%20plan%20a%20custom%20island%20experience."
                        class="tour-contact-link"
                        target="_blank"
                        rel="noopener">

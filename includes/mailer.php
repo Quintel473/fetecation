@@ -158,7 +158,7 @@ function send_contact_autoreply($contact)
             . "Subject: {$contact['subject']}\n"
             . "{$contact['message']}\n\n"
             . "If you need a faster reply, message us on WhatsApp:\n"
-            . "https://wa.me/14734560954\n\n"
+            . "https://wa.me/14734597407\n\n"
             . "Talk soon,\n"
             . "The FeteCation Team\n";
 
@@ -243,7 +243,7 @@ function send_booking_confirmed_email(array $booking): bool
               "\n"
             . "We'll be in touch the day before with any final reminders.\n\n"
             . "If anything has changed, just reply to this email or message us on WhatsApp:\n"
-            . "https://wa.me/14734560954\n\n"
+            . "https://wa.me/14734597407\n\n"
             . "Looking forward to seeing you!\n"
             . "The FeteCation Team\n";
 
@@ -399,7 +399,7 @@ function send_manual_booking_confirmation(array $booking, bool $withPaymentLink 
         $body .=
               "If you need to change anything, just reply to this email\n"
             . "or message us on WhatsApp:\n"
-            . "https://wa.me/14734560954\n\n"
+            . "https://wa.me/14734597407\n\n"
             . "See you soon,\n"
             . "The FeteCation Team\n";
 
@@ -442,6 +442,105 @@ function send_admin_manual_booking_notice(array $booking): bool
 
     } catch (Throwable $e) {
         error_log('Admin manual booking notice failed: ' . $e->getMessage());
+        return false;
+    }
+}
+
+/* =========================================================
+   CUSTOMER-INITIATED CANCELLATION
+   ========================================================= */
+
+/**
+ * Email the customer confirming their cancellation.
+ */
+function send_customer_cancelled_notice_to_customer(array $booking, bool $refundOwed, bool $lateCancel): bool
+{
+    try {
+        $mail = fete_mailer();
+        $mail->addAddress($booking['Email'], $booking['Name']);
+        $mail->addReplyTo(FETE_SMTP_TO, 'FeteCation Taxi & Tours');
+
+        $tourLabel = ($booking['TourSlug'] === 'taxi' || empty($booking['TourSlug']))
+                     ? 'Taxi Service'
+                     : ($booking['TourSlug'] ?: 'Tour');
+
+        $mail->Subject = 'Your booking has been cancelled — ' . $booking['Reference'];
+
+        $body =
+              "Hi {$booking['Name']},\n\n"
+            . "We've received your cancellation for the following booking:\n\n"
+            . "Reference:    {$booking['Reference']}\n"
+            . "Experience:   {$tourLabel}\n"
+            . "Date:         {$booking['BookingDate']}\n"
+            . "Guests:       {$booking['NumberOfPassengers']}\n\n";
+
+        if ($refundOwed) {
+            $body .=
+                  "REFUND\n"
+                . "A refund will be issued to your original payment method via PayPal\n"
+                . "within 5 business days. You'll receive a separate confirmation\n"
+                . "email once it's been sent.\n\n";
+        } elseif ($lateCancel) {
+            $body .=
+                  "Please note:\n"
+                . "This cancellation was within 24 hours of your trip, so per our\n"
+                . "Terms of Service, the deposit is not refundable.\n\n";
+        }
+
+        $body .=
+              "We hope to see you on the island another time. To book again:\n"
+            . "https://fetecation.com/booking.php\n\n"
+            . "If anything here looks wrong, just reply to this email.\n\n"
+            . "— The FeteCation Team\n";
+
+        $mail->Body = $body;
+        $mail->send();
+        return true;
+
+    } catch (Throwable $e) {
+        error_log('Customer cancellation email failed: ' . $e->getMessage());
+        return false;
+    }
+}
+
+
+/**
+ * Email the admin that a customer cancelled their own booking.
+ */
+function send_customer_cancelled_notice_to_admin(array $booking, bool $refundOwed, bool $lateCancel): bool
+{
+    try {
+        $mail = fete_mailer();
+        $mail->addAddress(FETE_SMTP_TO);
+        $mail->addReplyTo($booking['Email'], $booking['Name']);
+
+        $tourLabel = ($booking['TourSlug'] === 'taxi' || empty($booking['TourSlug']))
+                     ? 'Taxi Service'
+                     : ($booking['TourSlug'] ?: 'Tour');
+
+        $flag = $refundOwed ? '💳 REFUND NEEDED' : ($lateCancel ? '⚠️ LATE CANCEL' : 'No refund');
+
+        $mail->Subject = '❌ Booking cancelled by customer — ' . $booking['Reference'] . ' (' . $flag . ')';
+
+        $mail->Body =
+              "A customer has cancelled their own booking.\n\n"
+            . "Reference:    {$booking['Reference']}\n"
+            . "Experience:   {$tourLabel}\n"
+            . "Date:         {$booking['BookingDate']}\n"
+            . "Guests:       {$booking['NumberOfPassengers']}\n\n"
+            . "Customer:     {$booking['Name']}\n"
+            . "Email:        {$booking['Email']}\n"
+            . "Phone:        {$booking['Phone']}\n\n"
+            . "Payment:      " . ($booking['PaymentOption'] ?? 'on-day') . "\n"
+            . "Status:       " . ($refundOwed ? 'REFUND NEEDED — issue via PayPal' : ($lateCancel ? 'LATE CANCEL — no refund per policy' : 'No refund owed')) . "\n\n"
+            . "Open admin dashboard:\n"
+            . "http://localhost/fetecation/staff-7742/\n";
+
+        $mail->send();
+        return true;
+
+    } catch (Throwable $e) {
+        error_log('Admin cancellation notice failed: ' . $e->getMessage());
         return false;
     }
 }

@@ -20,7 +20,6 @@ if (!$customer) {
 
 /* ---------------------------------------------------------
    Load this customer's bookings from MySQL
-   Match by CustomerID OR Email (for older anonymous bookings)
    --------------------------------------------------------- */
 $myBookings = [];
 
@@ -227,6 +226,16 @@ $sideAvatar = customer_avatar_url($customer);
                                         <p class="account-booking-notes">
                                             <?= htmlspecialchars($b['Notes']); ?>
                                         </p>
+                                    <?php endif; ?>
+
+                                    <?php if ($status !== 'cancelled'): ?>
+                                        <div class="account-booking-actions">
+                                            <a href="/fetecation/account/cancel-booking.php?id=<?= (int)$b['BookingID']; ?>"
+                                               class="account-cancel-link"
+                                               onclick="return confirm('Cancel this booking? You\'ll see the refund details on the next page.');">
+                                                Cancel Booking
+                                            </a>
+                                        </div>
                                     <?php endif; ?>
 
                                 </article>

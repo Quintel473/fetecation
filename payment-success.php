@@ -99,7 +99,7 @@ require_once __DIR__ . '/includes/header.php';
 
             <div class="success-actions">
                 <a href="/fetecation/" class="primary-button">Back to Home</a>
-                <a href="https://wa.me/14734560954?text=Hi%20FeteCation!"
+                <a href="https://wa.me/14734597407?text=Hi%20FeteCation!"
                    class="secondary-button"
                    target="_blank"
                    rel="noopener">

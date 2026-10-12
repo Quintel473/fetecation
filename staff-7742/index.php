@@ -17,13 +17,11 @@ $search       = trim($_GET['q']      ?? '');
 $statusFilter = trim($_GET['status'] ?? '');
 $sourceFilter = trim($_GET['source'] ?? '');
 
-/* Validate status filter */
 $allowedStatuses = ['pending', 'confirmed', 'cancelled', 'completed'];
 if ($statusFilter !== '' && !in_array(strtolower($statusFilter), $allowedStatuses, true)) {
     $statusFilter = '';
 }
 
-/* Validate source filter */
 $allowedSources = ['website', 'whatsapp', 'phone', 'walk-in', 'referral', 'other'];
 if ($sourceFilter !== '' && !in_array(strtolower($sourceFilter), $allowedSources, true)) {
     $sourceFilter = '';
@@ -65,7 +63,6 @@ $bookingsTotal = 0;
 $bookingsPages = 1;
 
 try {
-    /* Count with filter */
     $stmt = $pdo->prepare('SELECT COUNT(*) FROM bookings' . $whereSql);
     $stmt->execute($params);
     $bookingsTotal = (int)$stmt->fetchColumn();
@@ -80,7 +77,6 @@ try {
          LIMIT :limit OFFSET :offset'
     );
 
-    /* Bind search/filter params */
     foreach ($params as $key => $val) {
         $stmt->bindValue($key, $val);
     }
@@ -94,7 +90,7 @@ try {
 }
 
 /* ---------------------------------------------------------
-   Load messages (unfiltered, paginated)
+   Load messages
    --------------------------------------------------------- */
 $messages = [];
 $messagesTotal = 0;
@@ -124,7 +120,7 @@ try {
 }
 
 /* ---------------------------------------------------------
-   Stats (always from the full dataset, unfiltered)
+   Stats
    --------------------------------------------------------- */
 $thisMonth = date('Y-m');
 $countThisMonth = 0;
@@ -150,7 +146,7 @@ try {
 }
 
 /* ---------------------------------------------------------
-   Return query string for action links (preserves everything)
+   Return query string for action links
    --------------------------------------------------------- */
 $returnParams = [
     'bpage'  => $bookingsPage,
@@ -163,7 +159,7 @@ if ($sourceFilter !== '') $returnParams['source'] = $sourceFilter;
 $returnQs = urlencode('?' . http_build_query($returnParams));
 
 /* ---------------------------------------------------------
-   Helper — build a paginated URL preserving filters
+   Helper — build a paginated URL
    --------------------------------------------------------- */
 function admin_page_url(
     int $bookingsPage,
@@ -434,6 +430,11 @@ function admin_pagination(
                                     'other'    => '•',
                                 ];
                                 $sourceIcon = $sourceIcons[$source] ?? '•';
+
+                                /* Refund/late-cancel flag from admin notes */
+                                $adminNotesRaw = $b['AdminNotes'] ?? '';
+                                $needsRefund   = stripos($adminNotesRaw, 'REFUND NEEDED') !== false;
+                                $lateCancel    = stripos($adminNotesRaw, 'LATE CANCEL') !== false;
                             ?>
                             <tr>
                                 <td class="cell-mono"><?= htmlspecialchars($b['Reference'] ?? '—'); ?></td>
@@ -462,6 +463,17 @@ function admin_pagination(
                                     <span class="status-badge <?= htmlspecialchars($statusClass); ?>">
                                         <?= htmlspecialchars(ucfirst($status)); ?>
                                     </span>
+                                    <?php if ($needsRefund): ?>
+                                        <br>
+                                        <small style="display:inline-block;margin-top:4px;padding:3px 8px;background:#eaf4ff;color:#1e60a8;font-size:10px;font-weight:800;letter-spacing:0.5px;border-radius:8px;">
+                                            💳 REFUND
+                                        </small>
+                                    <?php elseif ($lateCancel): ?>
+                                        <br>
+                                        <small style="display:inline-block;margin-top:4px;padding:3px 8px;background:#fff6e4;color:#8a5c10;font-size:10px;font-weight:800;letter-spacing:0.5px;border-radius:8px;">
+                                            ⚠️ LATE
+                                        </small>
+                                    <?php endif; ?>
                                 </td>
                                 <td class="cell-center">
                                     <small style="font-size:12px;color:#666;white-space:nowrap;">
@@ -506,7 +518,7 @@ function admin_pagination(
                                         <?php endif; ?>
                                         <?php if (!empty($b['AdminNotes'])): ?>
                                             <span class="detail-item">
-                                                <strong>Admin:</strong> <?= htmlspecialchars($b['AdminNotes']); ?>
+                                                <strong>Admin:</strong> <?= nl2br(htmlspecialchars($b['AdminNotes'])); ?>
                                             </span>
                                         <?php endif; ?>
                                     </td>

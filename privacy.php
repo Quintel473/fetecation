@@ -155,7 +155,7 @@ require_once __DIR__ . '/includes/header.php';
             </p>
             <ul>
                 <li><strong>Email:</strong> <a href="mailto:qunitelcharles@gmail.com">qunitelcharles@gmail.com</a></li>
-                <li><strong>Phone / WhatsApp:</strong> <a href="tel:+14734560954">+1 (473) 456-0954</a></li>
+                <li><strong>Phone / WhatsApp:</strong> <a href="tel:+14734597407">+1 (473) 456-0954</a></li>
                 <li><strong>Location:</strong> Grenada, Caribbean</li>
             </ul>
 
