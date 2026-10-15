@@ -16,7 +16,22 @@ $featuredTours = array_slice($tours, 0, 3, true);
 <!-- ============ HOME HERO ============ -->
 <section class="home-hero">
 
-    <div class="home-hero-image"></div>
+    <div class="home-hero-slideshow">
+
+        <div class="home-hero-slide"
+             style="background-image: url('/fetecation/images/hero.jpg');"></div>
+
+        <div class="home-hero-slide"
+             style="background-image: url('/fetecation/images/tours/island-highlights-1.jpg');"></div>
+
+        <div class="home-hero-slide"
+             style="background-image: url('/fetecation/images/tours/nature-adventure-1.jpg');"></div>
+
+        <div class="home-hero-slide"
+             style="background-image: url('/fetecation/images/tours/custom-island-1.jpg');"></div>
+
+    </div>
+
     <div class="home-hero-overlay"></div>
 
     <div class="container home-hero-content">
@@ -46,11 +61,6 @@ $featuredTours = array_slice($tours, 0, 3, true);
 
         </div>
 
-    </div>
-
-    <div class="hero-scroll">
-        <span></span> SCROLL
-    </div>
 
 </section>
 
