@@ -97,7 +97,7 @@ function send_customer_confirmation($booking)
             . "Reference:    {$booking['reference']}\n\n"
             . "We'll confirm availability and send you the final details within 24 hours.\n\n"
             . "If you need to reach us sooner:\n"
-            . "Phone/WhatsApp: +1 (473) 456-0954\n\n"
+            . "Phone/WhatsApp: +1 (473) 459-7407\n\n"
             . "See you soon,\n"
             . "The FeteCation Team\n";
 
@@ -284,7 +284,7 @@ function send_booking_cancelled_email(array $booking): bool
             . "Date:         {$booking['BookingDate']}\n\n"
             . "If this is unexpected, or you'd like to rebook,\n"
             . "please reach out to us:\n\n"
-            . "Phone/WhatsApp: +1 (473) 456-0954\n"
+            . "Phone/WhatsApp: +1 (473) 459-7407\n"
             . "Email:          qunitelcharles@gmail.com\n\n"
             . "We'd love another chance to make it right.\n\n"
             . "— The FeteCation Team\n";
