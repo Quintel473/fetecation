@@ -60,7 +60,7 @@ CREATE TABLE `bookings` (
 --
 
 INSERT INTO `bookings` (`BookingID`, `Reference`, `Name`, `Email`, `Phone`, `CustomerID`, `BookingType`, `TourID`, `TourSlug`, `VehicleID`, `PickupLocation`, `DropoffLocation`, `BookingDate`, `BookingTime`, `NumberOfPassengers`, `SpecialRequests`, `Notes`, `PaymentOption`, `Source`, `CustomPrice`, `AdminNotes`, `Status`, `SubmittedAt`, `IP`, `CreatedAt`) VALUES
-(1, '80159E', 'Test User', 'qunitelcharles@gmail.com', '1234567890', 1, 'Taxi', NULL, 'taxi', NULL, 'Radisson Hotel', NULL, '2026-10-17', NULL, 3, '', '', 'on-day', 'website', NULL, NULL, 'Pending', '2026-10-10 17:14:46', '::1', '2026-10-10 15:38:25');
+(1, '80159E', 'Test User', 'fetecation9@gmail.com', '1234567890', 1, 'Taxi', NULL, 'taxi', NULL, 'Radisson Hotel', NULL, '2026-10-17', NULL, 3, '', '', 'on-day', 'website', NULL, NULL, 'Pending', '2026-10-10 17:14:46', '::1', '2026-10-10 15:38:25');
 
 -- --------------------------------------------------------
 
@@ -93,7 +93,7 @@ CREATE TABLE `customers` (
 --
 
 INSERT INTO `customers` (`CustomerID`, `FirstName`, `LastName`, `Phone`, `AvatarPath`, `Email`, `Password`, `EmailVerified`, `VerifyToken`, `VerifyExpires`, `ResetToken`, `ResetExpires`, `LastLoginAt`, `RememberToken`, `RememberExpires`, `DeletedAt`, `CreatedAt`) VALUES
-(1, 'Quintel', 'Charles', '+1 ( 473 ) 456-0954', 'u1_a4bd255de6fe99f2.jpg', 'qunitelcharles@gmail.com', '$2y$10$SZnZbLNjPBweF.muBaGHTOuMa4QuCfdGVwQY6ae71uVCOToriH1Hu', 0, 'e189ce65503dc43fc258e12ffa9506204891b3db1317bc93a74bbfc5ed782b4b', '2026-10-12 15:52:21', NULL, NULL, '2026-10-10 19:38:49', '9003805b0187a8de77857ce202ae483d0449ab3a26b6d501ba9fcc01810224fc', '2026-11-10 00:50:47', NULL, '2026-10-10 13:52:21');
+(1, 'Quintel', 'Charles', '+1 ( 473 ) 456-0954', 'u1_a4bd255de6fe99f2.jpg', 'fetecation9@gmail.com', '$2y$10$SZnZbLNjPBweF.muBaGHTOuMa4QuCfdGVwQY6ae71uVCOToriH1Hu', 0, 'e189ce65503dc43fc258e12ffa9506204891b3db1317bc93a74bbfc5ed782b4b', '2026-10-12 15:52:21', NULL, NULL, '2026-10-10 19:38:49', '9003805b0187a8de77857ce202ae483d0449ab3a26b6d501ba9fcc01810224fc', '2026-11-10 00:50:47', NULL, '2026-10-10 13:52:21');
 
 -- --------------------------------------------------------
 

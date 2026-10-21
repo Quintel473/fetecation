@@ -15,9 +15,9 @@ require_once __DIR__ . '/PHPMailer/src/Exception.php';
    CONFIG
    ========================================================= */
 
-const FETE_SMTP_USER = 'qunitelcharles@gmail.com';
+const FETE_SMTP_USER = 'fetecation9@gmail.com';
 const FETE_SMTP_PASS = 'yrob tfxz zmml mqdf';
-const FETE_SMTP_TO   = 'qunitelcharles@gmail.com';
+const FETE_SMTP_TO   = 'fetecation9@gmail.com';
 
 
 /**
@@ -285,7 +285,7 @@ function send_booking_cancelled_email(array $booking): bool
             . "If this is unexpected, or you'd like to rebook,\n"
             . "please reach out to us:\n\n"
             . "Phone/WhatsApp: +1 (473) 459-7407\n"
-            . "Email:          qunitelcharles@gmail.com\n\n"
+            . "Email:          fetecation9@gmail.com\n\n"
             . "We'd love another chance to make it right.\n\n"
             . "— The FeteCation Team\n";
 

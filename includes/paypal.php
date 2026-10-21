@@ -17,7 +17,7 @@
 const PAYPAL_MODE          = 'sandbox';                              // 'sandbox' or 'live'
 const PAYPAL_CLIENT_ID     = 'PAYPAL_CLIENT_ID_PLACEHOLDER';         // ← replace
 const PAYPAL_SECRET        = 'PAYPAL_SECRET_PLACEHOLDER';            // ← replace
-const PAYPAL_BUSINESS_EMAIL= 'qunitelcharles@gmail.com';             // ← your PayPal business email
+const PAYPAL_BUSINESS_EMAIL= 'fetecation9@gmail.com';             // ← your PayPal business email
 const PAYPAL_CURRENCY      = 'USD';                                  // USD or XCD
 
 const PAYPAL_RETURN_URL    = 'http://localhost/fetecation/payment-success.php';

@@ -145,7 +145,7 @@ require_once __DIR__ . "/includes/header.php";
                 <p class="success-note">
                     If you don't hear from us within 24 hours, please
                     contact us directly at
-                    <a href="mailto:qunitelcharles@gmail.com">qunitelcharles@gmail.com</a>.
+                    <a href="mailto:fetecation9@gmail.com">fetecation9@gmail.com</a>.
                 </p>
 
             <?php endif; ?>
