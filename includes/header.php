@@ -31,6 +31,16 @@ if (file_exists(__DIR__ . '/customer-auth.php')) {
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <!-- Apply saved theme immediately to prevent white flash -->
+    <script>
+        (function() {
+            var saved = localStorage.getItem('theme');
+            if (saved === 'dark') {
+                document.documentElement.setAttribute('data-theme', 'dark');
+            }
+        })();
+    </script>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 

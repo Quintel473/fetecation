@@ -4268,3 +4268,235 @@ img {
 .taxi-dropdown-card:hover > p {
     margin-bottom: 0;
 }
+
+/* =========================================================
+   APPEARANCE SETTINGS UI
+   ========================================================= */
+
+.appearance-options {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.appearance-option {
+    flex: 1;
+    min-width: 140px;
+    cursor: pointer;
+    position: relative;
+}
+
+/* Hide the actual radio button */
+.appearance-option input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.appearance-preview {
+    display: block;
+    height: 90px;
+    border-radius: 8px;
+    border: 2px solid var(--fete-border);
+    margin-bottom: 10px;
+    transition: var(--transition);
+}
+
+/* Preview Box: Light */
+.appearance-light {
+    background: #ffffff;
+    box-shadow: inset 0 -30px 0 0 #f7f4f2;
+}
+
+/* Preview Box: Dark */
+.appearance-dark {
+    background: #151515;
+    box-shadow: inset 0 -30px 0 0 #252525;
+}
+
+.appearance-label {
+    display: block;
+    text-align: center;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--fete-gray);
+}
+
+/* Checked state styling */
+.appearance-option input[type="radio"]:checked ~ .appearance-preview {
+    border-color: var(--fete-orange);
+    box-shadow: 0 0 0 3px rgba(233, 120, 63, 0.2), inset 0 -30px 0 0 var(--fete-light);
+}
+.appearance-option input[type="radio"]:checked ~ .appearance-dark {
+    box-shadow: 0 0 0 3px rgba(233, 120, 63, 0.2), inset 0 -30px 0 0 #252525;
+}
+
+.appearance-option input[type="radio"]:checked ~ .appearance-label {
+    color: var(--fete-orange-dark);
+}
+
+
+/* =========================================================
+   DARK THEME (Complete Variables & Overrides)
+   ========================================================= */
+
+[data-theme="dark"] {
+    --fete-white: #121212;      /* Main background */
+    --fete-light: #1e1e1e;      /* Card / panel backgrounds */
+    --fete-dark: #f5f5f5;       /* Main text color */
+    --fete-gray: #b0b0b0;       /* Muted text */
+    --fete-border: #333333;     /* Borders */
+    
+    /* Keep brand colors mostly intact */
+    --fete-orange: #f08a57;
+    --fete-orange-dark: #e9783f;
+    --fete-burgundy: #9e3d39;
+    --fete-light-border: #333;
+    --shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+/* Core backgrounds */
+[data-theme="dark"] body {
+    background: var(--fete-white);
+    color: var(--fete-dark);
+}
+
+[data-theme="dark"] .site-header {
+    background: var(--fete-white);
+    border-bottom: 1px solid var(--fete-border);
+}
+
+[data-theme="dark"] .site-footer {
+    background: #000000;
+    border-top: 1px solid #222;
+}
+
+/* Navigation */
+[data-theme="dark"] .site-logo-text strong,
+[data-theme="dark"] .main-navigation a {
+    color: var(--fete-dark);
+}
+
+/* Cards & Panels */
+[data-theme="dark"] .service-card,
+[data-theme="dark"] .tour-card,
+[data-theme="dark"] .featured-tour-card,
+[data-theme="dark"] .testimonial-card,
+[data-theme="dark"] .account-booking,
+[data-theme="dark"] .profile-card,
+[data-theme="dark"] .account-user-card,
+[data-theme="dark"] .account-nav,
+[data-theme="dark"] .booking-form-card,
+[data-theme="dark"] .contact-form-card {
+    background: var(--fete-light);
+    border-color: var(--fete-border);
+}
+
+/* Form Inputs */
+[data-theme="dark"] .form-group input,
+[data-theme="dark"] .form-group select,
+[data-theme="dark"] .form-group textarea {
+    background: var(--fete-white);
+    color: var(--fete-dark);
+    border-color: var(--fete-border);
+}
+
+[data-theme="dark"] .form-group input:focus {
+    background: #242424;
+}
+
+/* Price Preview */
+[data-theme="dark"] .price-preview {
+    background: #1a1a1a;
+    border-color: #333;
+}
+[data-theme="dark"] .price-preview-header {
+    border-color: #333;
+}
+
+/* =========================================================
+   DARK THEME — TEXT VISIBILITY FIXES
+   ========================================================= */
+
+/* Ensure all paragraphs and list items in dark mode are light */
+[data-theme="dark"] p,
+[data-theme="dark"] li,
+[data-theme="dark"] span:not(.status-badge):not(.badge):not(.service-number):not(.section-label) {
+    color: var(--fete-dark);
+}
+
+/* Legal pages */
+[data-theme="dark"] .legal-content p,
+[data-theme="dark"] .legal-content li,
+[data-theme="dark"] .legal-content h3,
+[data-theme="dark"] .legal-updated {
+    color: #d1d1d1; 
+}
+[data-theme="dark"] .legal-content h2 {
+    color: var(--fete-dark);
+    border-bottom-color: #333;
+}
+[data-theme="dark"] .legal-updated {
+    background: #1e1e1e;
+    border-left-color: var(--fete-orange);
+}
+
+/* Form Labels and Hints */
+[data-theme="dark"] .form-group label,
+[data-theme="dark"] .form-hint,
+[data-theme="dark"] .checkbox-label,
+[data-theme="dark"] .booking-note p,
+[data-theme="dark"] .auth-card-subtitle {
+    color: #b0b0b0;
+}
+
+/* Card inner texts */
+[data-theme="dark"] .service-card p,
+[data-theme="dark"] .tour-content p,
+[data-theme="dark"] .featured-tour-content p,
+[data-theme="dark"] .testimonial-text,
+[data-theme="dark"] .booking-intro p,
+[data-theme="dark"] .taxi-expand-inner p {
+    color: #b0b0b0;
+}
+
+[data-theme="dark"] .taxi-expand-inner p {
+    border-color: #444;
+}
+
+/* Account Dashboard texts */
+[data-theme="dark"] .account-stat-label,
+[data-theme="dark"] .account-email,
+[data-theme="dark"] .account-phone,
+[data-theme="dark"] .account-booking-meta dt {
+    color: #a0a0a0;
+}
+[data-theme="dark"] .account-booking-meta dd,
+[data-theme="dark"] .account-stat-value,
+[data-theme="dark"] .account-booking h3 {
+    color: var(--fete-dark);
+}
+
+/* Notices */
+[data-theme="dark"] .form-success {
+    background: rgba(76, 175, 80, 0.1);
+    color: #81c784;
+    border-color: #4caf50;
+}
+[data-theme="dark"] .form-errors,
+[data-theme="dark"] .acct-error,
+[data-theme="dark"] .login-error {
+    background: rgba(233, 120, 63, 0.1);
+    color: #f08a57;
+    border-color: var(--fete-orange);
+}
+
+/* Admin / Account Tables */
+[data-theme="dark"] .admin-table td,
+[data-theme="dark"] .admin-table th {
+    border-bottom-color: #333;
+    color: var(--fete-dark);
+}
+[data-theme="dark"] .admin-table tbody tr:hover {
+    background: #1a1a1a;
+}

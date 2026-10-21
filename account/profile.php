@@ -341,6 +341,31 @@ $avatarUrl = customer_avatar_url($customer);
                 </section>
 
 
+                <!-- ============ APPEARANCE ============ -->
+                <section class="profile-card">
+
+                    <header class="profile-card-header">
+                        <h2>Appearance</h2>
+                        <p>Choose how FeteCation looks to you.</p>
+                    </header>
+
+                    <div class="appearance-options">
+                        <label class="appearance-option">
+                            <input type="radio" name="theme" value="light" class="theme-radio">
+                            <span class="appearance-preview appearance-light"></span>
+                            <span class="appearance-label">Light Mode</span>
+                        </label>
+
+                        <label class="appearance-option">
+                            <input type="radio" name="theme" value="dark" class="theme-radio">
+                            <span class="appearance-preview appearance-dark"></span>
+                            <span class="appearance-label">Dark Mode</span>
+                        </label>
+                    </div>
+
+                </section>
+
+
                 <!-- ============ EMAIL ============ -->
                 <section class="profile-card">
 
@@ -501,6 +526,33 @@ $avatarUrl = customer_avatar_url($customer);
     </div>
 
 </section>
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    var radios = document.querySelectorAll('.theme-radio');
+    var currentTheme = localStorage.getItem('theme') || 'light';
+
+    radios.forEach(function(radio) {
+        if (radio.value === currentTheme) {
+            radio.checked = true;
+        }
+
+        radio.addEventListener('change', function(e) {
+            if (e.target.checked) {
+                var newTheme = e.target.value;
+                localStorage.setItem('theme', newTheme);
+                
+                if (newTheme === 'dark') {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                } else {
+                    document.documentElement.removeAttribute('data-theme');
+                }
+            }
+        });
+    });
+});
+</script>
 
 
 <?php require_once __DIR__ . '/../includes/footer.php'; ?>
