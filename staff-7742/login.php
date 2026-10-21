@@ -137,6 +137,8 @@ $stage = !empty($_SESSION['admin_2fa_pending']) ? '2fa' : 'password';
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Login | FeteCation</title>
     <link rel="stylesheet" href="/fetecation/staff-7742/style.css">
+    <link rel="icon" type="image/png" href="/fetecation/images/favicon.png">
+    <link rel="apple-touch-icon" href="/fetecation/images/apple-touch-icon.png">
 </head>
 <body class="login-body">
 

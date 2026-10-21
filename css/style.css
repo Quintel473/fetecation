@@ -4204,3 +4204,67 @@ img {
     background: #1877f2;
     border-color: #1877f2;
 }
+
+/* =========================================================
+   TAXI SERVICES — Expanding Cards
+   ========================================================= */
+
+/* Ensure the cards act as flex containers so content pushes down */
+.taxi-dropdown-card {
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+}
+
+.taxi-dropdown-card > p {
+    transition: margin-bottom 0.3s ease;
+}
+
+/* The wrapper for the hidden details */
+.taxi-expand-content {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.35s ease;
+    margin-top: 0;
+}
+
+/* When hovering the card, expand the grid */
+.taxi-dropdown-card:hover .taxi-expand-content {
+    grid-template-rows: 1fr;
+    margin-top: 16px; /* adds space before the expanded text */
+}
+
+/* The inner wrapper hides the overflow so text doesn't spill out when closed */
+.taxi-expand-inner {
+    overflow: hidden;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+/* Fade the text in when expanding */
+.taxi-dropdown-card:hover .taxi-expand-inner {
+    opacity: 1;
+}
+
+/* Style the expanded text */
+.taxi-expand-inner p {
+    font-size: 14px;
+    color: var(--fete-gray);
+    line-height: 1.6;
+    border-top: 1px dashed var(--fete-border);
+    padding-top: 14px;
+    margin-bottom: 12px;
+}
+
+/* The "Book Now" button inside the expansion */
+.taxi-expand-inner .text-button {
+    display: inline-block;
+    color: var(--fete-orange-dark);
+    font-weight: 800;
+    font-size: 14px;
+}
+
+/* Hide the original short description smoothly when expanded (optional) */
+.taxi-dropdown-card:hover > p {
+    margin-bottom: 0;
+}

@@ -811,3 +811,66 @@
 .password-toggle.is-visible .icon-eye-off {
     display: block;
 }
+
+/* =========================================================
+   ACCOUNT AUTH — Top actions & bottom switch
+   ========================================================= */
+
+.acct-top-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+    font-size: 13.5px;
+    color: var(--acct-gray, #666);
+    margin-bottom: 24px;
+}
+
+.acct-top-actions a {
+    color: var(--acct-orange-dark, #c94f2c);
+    font-weight: 700;
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.2s;
+}
+
+.acct-top-actions a:hover {
+    border-bottom-color: var(--acct-orange-dark, #c94f2c);
+}
+
+/* Bottom switch block */
+.acct-switch-account {
+    margin-top: 32px;
+    padding-top: 28px;
+    border-top: 1px solid var(--acct-border, #eaded6);
+    text-align: center;
+}
+
+.acct-switch-account p {
+    font-size: 14px;
+    color: var(--acct-gray, #666);
+    margin-bottom: 12px;
+}
+
+.acct-button-outline {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 14px 20px;
+    background: transparent;
+    color: var(--acct-dark, #151515);
+    border: 2px solid var(--acct-border, #eaded6);
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.acct-button-outline:hover {
+    border-color: var(--acct-orange, #e9783f);
+    color: var(--acct-orange, #e9783f);
+    background: rgba(233, 120, 63, 0.04);
+    transform: translateY(-1px);
+}

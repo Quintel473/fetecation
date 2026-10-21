@@ -39,6 +39,8 @@ if (isset($_GET['deleted']))    $notice = 'Your account has been deleted. We\'re
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sign In | FeteCation</title>
     <link rel="stylesheet" href="/fetecation/css/account.css">
+    <link rel="icon" type="image/png" href="/fetecation/images/favicon.png">
+    <link rel="apple-touch-icon" href="/fetecation/images/apple-touch-icon.png">
 </head>
 <body class="acct-body">
 

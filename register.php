@@ -47,6 +47,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Create Account | FeteCation</title>
     <link rel="stylesheet" href="/fetecation/css/account.css">
+    <link rel="icon" type="image/png" href="/fetecation/images/favicon.png">
+    <link rel="apple-touch-icon" href="/fetecation/images/apple-touch-icon.png">
 </head>
 <body class="acct-body">
 
@@ -118,6 +120,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </a>
 
                 <?php else: ?>
+
+                    <div class="acct-top-actions">
+                        <span>Already have an account?</span>
+                        <a href="/fetecation/login.php">Sign In</a>
+                    </div>
 
                     <header class="acct-panel-header">
                         <h2>Create Account</h2>
@@ -276,14 +283,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                     </form>
 
-                    <p class="acct-panel-footer">
-                        Already have an account?
-                        <a href="/fetecation/login.php">Sign in →</a>
-                    </p>
+                    <div class="acct-switch-account">
+                        <p>Already have an account?</p>
+                        <a href="/fetecation/login.php" class="acct-button-outline">
+                            Sign In to your account
+                        </a>
+                    </div>
 
                 <?php endif; ?>
 
-                <p class="acct-panel-footer">
+                <p class="acct-panel-footer" style="margin-top:24px;">
                     <a href="/fetecation/">← Back to FeteCation.com</a>
                 </p>
 
