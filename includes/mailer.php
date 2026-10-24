@@ -16,7 +16,7 @@ require_once __DIR__ . '/PHPMailer/src/Exception.php';
    ========================================================= */
 
 const FETE_SMTP_USER = 'fetecation9@gmail.com';
-const FETE_SMTP_PASS = 'yrob tfxz zmml mqdf';
+const FETE_SMTP_PASS = 'oezi rcvz oflu tczm';
 const FETE_SMTP_TO   = 'fetecation9@gmail.com';
 
 
