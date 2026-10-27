@@ -131,31 +131,39 @@ if (file_exists(__DIR__ . '/customer-auth.php')) {
 
         <nav class="main-navigation">
 
-            <a href="/fetecation/">Home</a>
+            <?php 
+            // Get the current page filename (e.g. "tours.php" or "parties.php")
+            $currentPage = basename($_SERVER['PHP_SELF']); 
+            ?>
 
-            <a href="/fetecation/taxis.php">Taxi Services</a>
+            <a href="/fetecation/" class="<?= $currentPage === 'index.php' ? 'active' : ''; ?>">Home</a>
 
-            <a href="/fetecation/tours.php">Tours</a>
+            <a href="/fetecation/taxis.php" class="<?= $currentPage === 'taxis.php' ? 'active' : ''; ?>">Taxi Services</a>
 
-            <a href="/fetecation/about.php">About</a>
+            <a href="/fetecation/tours.php" class="<?= in_array($currentPage, ['tours.php', 'tour-detail.php']) ? 'active' : ''; ?>">Tours</a>
 
-            <a href="/fetecation/contact.php">Contact</a>
+            <!-- NEW PARTIES LINK (Removed inline style, added active logic) -->
+            <a href="/fetecation/parties.php" class="<?= in_array($currentPage, ['parties.php', 'party-booking.php']) ? 'active' : ''; ?>">Parties</a>
+
+            <a href="/fetecation/about.php" class="<?= $currentPage === 'about.php' ? 'active' : ''; ?>">About</a>
+
+            <a href="/fetecation/contact.php" class="<?= $currentPage === 'contact.php' ? 'active' : ''; ?>">Contact</a>
 
             <?php if (function_exists('customer_is_logged_in') && customer_is_logged_in()): ?>
 
-                <a href="/fetecation/account/index.php" class="nav-account-link">
+                <a href="/fetecation/account/index.php" class="nav-account-link <?= $currentPage === 'index.php' && strpos($_SERVER['PHP_SELF'], 'account') ? 'active' : ''; ?>">
                     👤 My Account
                 </a>
 
             <?php else: ?>
 
-                <a href="/fetecation/login.php" class="nav-account-link">
+                <a href="/fetecation/login.php" class="nav-account-link <?= $currentPage === 'login.php' ? 'active' : ''; ?>">
                     Sign In
                 </a>
 
             <?php endif; ?>
 
-            <a href="/fetecation/booking.php" class="nav-book-button">
+            <a href="/fetecation/booking.php" class="nav-book-button <?= $currentPage === 'booking.php' ? 'active' : ''; ?>">
                 Book Now
             </a>
 

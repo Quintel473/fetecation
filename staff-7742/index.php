@@ -503,7 +503,7 @@ function admin_pagination(
                                 </td>
                             </tr>
 
-                            <?php if (!empty($b['Notes']) || !empty($b['PickupLocation']) || !empty($b['AdminNotes'])): ?>
+                            <?php if (!empty($b['Notes']) || !empty($b['PickupLocation']) || !empty($b['MultiStops']) || !empty($b['AdminNotes'])): ?>
                                 <tr class="detail-row">
                                     <td colspan="11">
                                         <?php if (!empty($b['PickupLocation'])): ?>
@@ -511,11 +511,19 @@ function admin_pagination(
                                                 <strong>Pickup:</strong> <?= htmlspecialchars($b['PickupLocation']); ?>
                                             </span>
                                         <?php endif; ?>
+
+                                        <?php if (!empty($b['MultiStops'])): ?>
+                                            <span class="detail-item" style="color:var(--admin-orange-dark);">
+                                                <strong>Stops:</strong> <?= htmlspecialchars($b['MultiStops']); ?>
+                                            </span>
+                                        <?php endif; ?>
+
                                         <?php if (!empty($b['Notes'])): ?>
                                             <span class="detail-item">
                                                 <strong>Notes:</strong> <?= htmlspecialchars($b['Notes']); ?>
                                             </span>
                                         <?php endif; ?>
+                                        
                                         <?php if (!empty($b['AdminNotes'])): ?>
                                             <span class="detail-item">
                                                 <strong>Admin:</strong> <?= nl2br(htmlspecialchars($b['AdminNotes'])); ?>

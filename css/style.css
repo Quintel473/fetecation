@@ -4500,3 +4500,31 @@ img {
 [data-theme="dark"] .admin-table tbody tr:hover {
     background: #1a1a1a;
 }
+
+/* =========================================================
+   NAVIGATION — ACTIVE PAGE HIGHLIGHT
+   ========================================================= */
+
+/* Override the default link colors for the active state */
+.main-navigation a.active {
+    color: var(--fete-orange-dark);
+}
+
+/* For links that normally get the hover underline (Home, Taxi, etc.) */
+.main-navigation a:not(.nav-book-button):not(.nav-account-link).active::after {
+    width: 100%; /* Force the underline to stay visible */
+    background: var(--fete-orange);
+}
+
+/* Handle the My Account / Sign In link specifically */
+.main-navigation a.nav-account-link.active {
+    color: var(--fete-orange-dark);
+    font-weight: 800;
+}
+
+/* Handle the Book Now button when on the booking page */
+.main-navigation a.nav-book-button.active {
+    background: var(--fete-orange-dark);
+    box-shadow: 0 0 0 3px rgba(201, 79, 44, 0.25);
+    transform: translateY(-1px);
+}
