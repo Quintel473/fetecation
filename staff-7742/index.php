@@ -271,6 +271,7 @@ function admin_pagination(
             Signed in as <strong><?= htmlspecialchars($_SESSION['admin_username'] ?? 'admin'); ?></strong>
         </span>
         <a href="/fetecation/staff-7742/new-booking.php" class="admin-btn admin-btn-success">➕ New Booking</a>
+        <a href="/fetecation/staff-7742/tours.php" class="admin-btn admin-btn-ghost">🎒 Manage Tours</a>
         <a href="/fetecation/" class="admin-btn admin-btn-ghost">View Site</a>
         <a href="/fetecation/staff-7742/logout.php" class="admin-btn admin-btn-danger">Log Out</a>
     </div>

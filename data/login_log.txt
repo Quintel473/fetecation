@@ -19,3 +19,5 @@
 [2026-10-24 16:48:56] LOGIN_SUCCESS | ip=::1 | ua=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) | admin signed in
 [2026-10-27 17:35:25] LOGIN_2FA_SENT | ip=::1 | ua=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) | code emailed to admin
 [2026-10-27 17:35:55] LOGIN_SUCCESS | ip=::1 | ua=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) | admin signed in
+[2026-10-28 01:13:06] LOGIN_2FA_SENT | ip=::1 | ua=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) | code emailed to admin
+[2026-10-28 01:13:28] LOGIN_SUCCESS | ip=::1 | ua=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) | admin signed in
