@@ -1,11 +1,11 @@
 <?php
 $pageTitle = "Party Booking";
 
-require_once __DIR__ . "/tours-data.php";
-require_once __DIR__ . "/includes/mailer.php";
-require_once __DIR__ . "/includes/customer-auth.php";
-require_once __DIR__ . "/includes/database.php";
-require_once __DIR__ . "/includes/paypal.php";
+require_once __DIR__ . "/../data/tours-data.php";
+require_once __DIR__ . "/../includes/mailer.php";
+require_once __DIR__ . "/../includes/customer-auth.php";
+require_once __DIR__ . "/../includes/database.php";
+require_once __DIR__ . "/../includes/paypal.php";
 
 /* Default to the first party if none selected */
 $selectedTour = isset($_GET['tour']) ? htmlspecialchars($_GET['tour']) : 'friday-night-lime';
@@ -96,7 +96,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             send_booking_notification($bookingEmailData);
             send_customer_confirmation($bookingEmailData);
 
-            header('Location: /fetecation/booking-success.php?ref=' . urlencode($reference));
+            header('Location: /fetecation/booking/booking-success.php?ref=' . urlencode($reference));
             exit;
 
         } catch (Throwable $e) {
@@ -106,7 +106,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-require_once __DIR__ . "/includes/header.php";
+require_once __DIR__ . "/../includes/header.php";
 ?>
 
 <section class="page-hero">
@@ -223,4 +223,4 @@ function addStop() {
 }
 </script>
 
-<?php require_once __DIR__ . "/includes/footer.php"; ?>
+<?php require_once __DIR__ . "/../includes/footer.php"; ?>

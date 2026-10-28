@@ -10,14 +10,14 @@ require_once __DIR__ . '/../includes/mailer.php';
 
 /* Must be logged in */
 if (!customer_is_logged_in()) {
-    header('Location: /fetecation/login.php');
+    header('Location: /fetecation/auth/login.php');
     exit;
 }
 
 $customer = customer_current();
 if (!$customer) {
     customer_logout();
-    header('Location: /fetecation/login.php');
+    header('Location: /fetecation/auth/login.php');
     exit;
 }
 

@@ -142,7 +142,6 @@ if (file_exists(__DIR__ . '/customer-auth.php')) {
 
             <a href="/fetecation/tours.php" class="<?= in_array($currentPage, ['tours.php', 'tour-detail.php']) ? 'active' : ''; ?>">Tours</a>
 
-            <!-- NEW PARTIES LINK (Removed inline style, added active logic) -->
             <a href="/fetecation/parties.php" class="<?= in_array($currentPage, ['parties.php', 'party-booking.php']) ? 'active' : ''; ?>">Parties</a>
 
             <a href="/fetecation/about.php" class="<?= $currentPage === 'about.php' ? 'active' : ''; ?>">About</a>
@@ -157,13 +156,13 @@ if (file_exists(__DIR__ . '/customer-auth.php')) {
 
             <?php else: ?>
 
-                <a href="/fetecation/login.php" class="nav-account-link <?= $currentPage === 'login.php' ? 'active' : ''; ?>">
+                <a href="/fetecation/auth/login.php" class="nav-account-link <?= $currentPage === 'login.php' ? 'active' : ''; ?>">
                     Sign In
                 </a>
 
             <?php endif; ?>
 
-            <a href="/fetecation/booking.php" class="nav-book-button <?= $currentPage === 'booking.php' ? 'active' : ''; ?>">
+            <a href="/fetecation/booking/booking.php" class="nav-book-button <?= $currentPage === 'booking.php' ? 'active' : ''; ?>">
                 Book Now
             </a>
 

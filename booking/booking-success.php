@@ -2,8 +2,8 @@
 
 $pageTitle = "Booking Received";
 
-require_once __DIR__ . "/includes/database.php";
-require_once __DIR__ . "/includes/paypal.php";
+require_once __DIR__ . "/../includes/database.php";
+require_once __DIR__ . "/../includes/paypal.php";
 
 $ref = $_GET['ref'] ?? '';
 
@@ -21,7 +21,7 @@ if ($ref !== '' && ctype_alnum($ref)) {
     }
 }
 
-require_once __DIR__ . "/includes/header.php";
+require_once __DIR__ . "/../includes/header.php";
 
 ?>
 
@@ -118,7 +118,7 @@ require_once __DIR__ . "/includes/header.php";
                             </p>
                         <?php endif; ?>
 
-                        <a href="/fetecation/payment-start.php?ref=<?= urlencode($booking['Reference']); ?>"
+                        <a href="/fetecation/booking/payment-start.php?ref=<?= urlencode($booking['Reference']); ?>"
                            class="primary-button payment-button">
                             💳 Pay Now
                         </a>
@@ -156,7 +156,7 @@ require_once __DIR__ . "/includes/header.php";
                     Back to Home
                 </a>
 
-                <a href="https://wa.me/14734597407?text=Hi%20FeteCation!%20I%20just%20submitted%20a%20booking%20(Ref%3A%20<?= urlencode($ref); ?>)"
+                <a href="https://wa.me/14734597407?text=Hi%20FeteCation!%20I%20just%20submitted%20a%20booking%20(Ref%3A%20<?= urlencode($ref); ?>)""
                    class="secondary-button"
                    target="_blank"
                    rel="noopener">
@@ -171,4 +171,4 @@ require_once __DIR__ . "/includes/header.php";
 </section>
 
 
-<?php require_once __DIR__ . "/includes/footer.php"; ?>
+<?php require_once __DIR__ . "/../includes/footer.php"; ?>

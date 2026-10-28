@@ -2,11 +2,11 @@
 
 $pageTitle = "Book Your Ride";
 
-require_once __DIR__ . "/tours-data.php";
-require_once __DIR__ . "/includes/mailer.php";
-require_once __DIR__ . "/includes/customer-auth.php";
-require_once __DIR__ . "/includes/database.php";
-require_once __DIR__ . "/includes/paypal.php";
+require_once __DIR__ . "/../data/tours-data.php";
+require_once __DIR__ . "/../includes/mailer.php";
+require_once __DIR__ . "/../includes/customer-auth.php";
+require_once __DIR__ . "/../includes/database.php";
+require_once __DIR__ . "/../includes/paypal.php";
 
 /* ---------------------------------------------------------
    Handle form submission
@@ -122,7 +122,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         if (empty($errors)) {
-            $dir = __DIR__ . '/data/bookings';
+            $dir = __DIR__ . '/../data/bookings';
             if (!is_dir($dir)) {
                 @mkdir($dir, 0775, true);
             }
@@ -134,7 +134,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             send_booking_notification($booking);
             send_customer_confirmation($booking);
 
-            header('Location: /fetecation/booking-success.php?ref=' . urlencode($reference));
+            header('Location: /fetecation/booking/booking-success.php?ref=' . urlencode($reference));
             exit;
         }
     }
@@ -163,7 +163,7 @@ $tourPricesForJs = [
     'custom-island'     => ['type' => 'custom',     'amount' => null],
 ];
 
-require_once __DIR__ . "/includes/header.php";
+require_once __DIR__ . "/../includes/header.php";
 
 ?>
 
@@ -202,7 +202,7 @@ require_once __DIR__ . "/includes/header.php";
                 <div class="booking-note">
                     <strong>Already have an account?</strong>
                     <p>
-                        <a href="/fetecation/login.php" style="color:var(--fete-orange-dark);font-weight:700;">
+                        <a href="/fetecation/auth/login.php" style="color:var(--fete-orange-dark);font-weight:700;">
                             Sign in
                         </a>
                         to pre-fill your details and keep track of your bookings.
@@ -226,7 +226,7 @@ require_once __DIR__ . "/includes/header.php";
                 </div>
             <?php endif; ?>
 
-            <form method="post" action="/fetecation/booking.php">
+            <form method="post" action="/fetecation/booking/booking.php">
 
                 <div class="form-row">
 
@@ -512,4 +512,4 @@ require_once __DIR__ . "/includes/header.php";
 </script>
 
 
-<?php require_once __DIR__ . "/includes/footer.php"; ?>
+<?php require_once __DIR__ . "/../includes/footer.php"; ?>

@@ -5,8 +5,8 @@
 
 $pageTitle = "Complete Payment";
 
-require_once __DIR__ . '/includes/database.php';
-require_once __DIR__ . '/includes/paypal.php';
+require_once __DIR__ . '/../includes/database.php';
+require_once __DIR__ . '/../includes/paypal.php';
 
 $ref = $_GET['ref'] ?? '';
 
@@ -34,7 +34,7 @@ $paymentOption = $booking['PaymentOption'] ?? 'full';
 
 /* If they chose "pay on day", nothing to pay now */
 if ($paymentOption === 'on-day') {
-    header('Location: /fetecation/booking-success.php?ref=' . urlencode($ref));
+    header('Location: /fetecation/booking/booking-success.php?ref=' . urlencode($ref));
     exit;
 }
 
@@ -51,7 +51,7 @@ $order = paypal_create_order($amount, $booking['Reference'], $description);
 
 if (!$order['ok']) {
 
-    require_once __DIR__ . '/includes/header.php';
+    require_once __DIR__ . '/../includes/header.php';
     ?>
     <section class="page-hero">
         <div class="container page-hero-content">
@@ -71,7 +71,7 @@ if (!$order['ok']) {
                     and we'll send you a payment link.
                 </p>
                 <div style="margin-top:26px;">
-                    <a href="/fetecation/payment-start.php?ref=<?= urlencode($ref); ?>"
+                    <a href="/fetecation/booking/payment-start.php?ref=<?= urlencode($ref); ?>"
                        class="primary-button">Try Again</a>
                     <a href="/fetecation/" style="display:inline-block;margin-left:14px;color:#666;">
                         Back to Home
@@ -81,7 +81,7 @@ if (!$order['ok']) {
         </div>
     </section>
     <?php
-    require_once __DIR__ . '/includes/footer.php';
+    require_once __DIR__ . '/../includes/footer.php';
     exit;
 }
 

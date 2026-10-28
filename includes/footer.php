@@ -40,7 +40,8 @@
                 Book your taxi or tour with FeteCation.
             </p>
 
-            <a href="/fetecation/booking.php" class="footer-button">
+            <!-- FIXED: Updated to new booking folder -->
+            <a href="/fetecation/booking/booking.php" class="footer-button">
                 Book Now
             </a>
 

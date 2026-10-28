@@ -1,50 +1,41 @@
 <?php
-$pageTitle = "Reset Password";
+$pageTitle = "Create Account";
 
-require_once __DIR__ . '/includes/customer-auth.php';
+require_once __DIR__ . '/../includes/customer-auth.php';
 
 if (customer_is_logged_in()) {
     header('Location: /fetecation/account/index.php');
     exit;
 }
 
-$token   = trim($_GET['token'] ?? $_POST['token'] ?? '');
 $errors  = [];
 $success = false;
 
-/* Validate token presence */
-$tokenValid = false;
-if ($token !== '') {
-    try {
-        $stmt = db()->prepare(
-            'SELECT CustomerID FROM customers
-             WHERE ResetToken = ?
-               AND (ResetExpires IS NULL OR ResetExpires > NOW())
-             LIMIT 1'
-        );
-        $stmt->execute([$token]);
-        $tokenValid = (bool)$stmt->fetch();
-    } catch (Throwable $e) {
-        $tokenValid = false;
-    }
-}
-
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
+    $first    = trim($_POST['first_name'] ?? '');
+    $last     = trim($_POST['last_name']  ?? '');
+    $email    = trim($_POST['email']      ?? '');
+    $phone    = trim($_POST['phone']      ?? '');
     $password = (string)($_POST['password'] ?? '');
     $confirm  = (string)($_POST['confirm']  ?? '');
 
-    if (!$tokenValid) {
-        $errors[] = 'This reset link is invalid or has expired.';
-    } elseif (strlen($password) < 8) {
-        $errors[] = 'Password must be at least 8 characters.';
-    } elseif ($password !== $confirm) {
+    if ($password !== $confirm) {
         $errors[] = 'Passwords do not match.';
-    } else {
-        if (customer_reset_password($token, $password)) {
+    }
+
+    if (empty($_POST['agree'])) {
+        $errors[] = 'Please agree to the Terms of Service and Privacy Policy.';
+    }
+
+    if (empty($errors)) {
+        $result = customer_register($first, $last, $email, $phone, $password);
+
+        if ($result['ok']) {
             $success = true;
+            $_POST = [];
         } else {
-            $errors[] = 'Could not update password. The link may have expired.';
+            $errors[] = $result['error'];
         }
     }
 }
@@ -54,7 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reset Password | FeteCation</title>
+    <title>Create Account | FeteCation</title>
     <link rel="stylesheet" href="/fetecation/css/account.css">
     <link rel="icon" type="image/png" href="/fetecation/images/favicon.png">
     <link rel="apple-touch-icon" href="/fetecation/images/apple-touch-icon.png">
@@ -71,7 +62,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             <div class="acct-hero-top">
 
-                <span class="acct-hero-badge">NEW PASSWORD</span>
+                <span class="acct-hero-badge">CUSTOMER</span>
 
                 <div class="acct-hero-logo">
                     <img src="/fetecation/images/logo.png" alt="FeteCation">
@@ -81,13 +72,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             <div class="acct-hero-body">
 
-                <h1>Almost there</h1>
-                <p class="acct-hero-sub">Set a new password</p>
+                <h1>Join Us</h1>
+                <p class="acct-hero-sub">My FeteCation</p>
 
                 <p class="acct-hero-text">
-                    Choose a strong password you'll remember.
-                    You'll be signed in right after.
+                    Create your free account to book faster and
+                    keep every trip in one place.
                 </p>
+
+                <ul class="acct-hero-list">
+                    <li>Book in seconds</li>
+                    <li>View all your trips</li>
+                    <li>Save your details</li>
+                </ul>
 
             </div>
 
@@ -105,47 +102,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <?php if ($success): ?>
 
                     <header class="acct-panel-header">
-                        <h2>Password updated</h2>
-                        <p>Your new password is active.</p>
+                        <h2>Check your inbox</h2>
+                        <p>We've sent a confirmation link to your email.</p>
                     </header>
 
                     <div class="acct-success">
                         <span class="acct-success-icon">✓</span>
                         <div>
-                            <strong>All set!</strong><br>
-                            You can now sign in with your new password.
+                            <strong>Account created!</strong><br>
+                            Click the link in your email to activate it, then sign in.
                         </div>
                     </div>
 
-                    <a href="/fetecation/login.php" class="acct-button" style="margin-top:8px;">
-                        <span>Sign In</span>
-                        <span class="acct-button-arrow">→</span>
-                    </a>
-
-                <?php elseif (!$tokenValid): ?>
-
-                    <header class="acct-panel-header">
-                        <h2>Link not valid</h2>
-                        <p>This reset link is broken or has expired.</p>
-                    </header>
-
-                    <div class="acct-error">
-                        <span class="acct-error-icon">!</span>
-                        <div>
-                            Reset links are only valid for 1 hour. Please request a new one.
-                        </div>
-                    </div>
-
-                    <a href="/fetecation/forgot-password.php" class="acct-button" style="margin-top:8px;">
-                        <span>Request a New Link</span>
+                    <a href="/fetecation/auth/login.php" class="acct-button" style="margin-top:8px;">
+                        <span>Go to Sign In</span>
                         <span class="acct-button-arrow">→</span>
                     </a>
 
                 <?php else: ?>
 
+                    <div class="acct-top-actions">
+                        <span>Already have an account?</span>
+                        <a href="/fetecation/auth/login.php">Sign In</a>
+                    </div>
+
                     <header class="acct-panel-header">
-                        <h2>Set New Password</h2>
-                        <p>Choose a password with at least 8 characters.</p>
+                        <h2>Create Account</h2>
+                        <p>It takes less than a minute.</p>
                     </header>
 
                     <?php if (!empty($errors)): ?>
@@ -159,12 +142,74 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         </div>
                     <?php endif; ?>
 
-                    <form method="post" action="/fetecation/reset-password.php" autocomplete="off">
+                    <form method="post" action="/fetecation/auth/register.php" autocomplete="off">
 
-                        <input type="hidden" name="token" value="<?= htmlspecialchars($token); ?>">
+                        <div class="acct-row">
+
+                            <div class="acct-field">
+                                <label for="first_name">First</label>
+                                <div class="acct-input-wrap">
+                                    <span class="acct-input-icon">👤</span>
+                                    <input
+                                        type="text"
+                                        id="first_name"
+                                        name="first_name"
+                                        required
+                                        autofocus
+                                        placeholder="First name"
+                                        value="<?= htmlspecialchars($_POST['first_name'] ?? ''); ?>"
+                                    >
+                                </div>
+                            </div>
+
+                            <div class="acct-field">
+                                <label for="last_name">Last</label>
+                                <div class="acct-input-wrap">
+                                    <span class="acct-input-icon">👤</span>
+                                    <input
+                                        type="text"
+                                        id="last_name"
+                                        name="last_name"
+                                        required
+                                        placeholder="Last name"
+                                        value="<?= htmlspecialchars($_POST['last_name'] ?? ''); ?>"
+                                    >
+                                </div>
+                            </div>
+
+                        </div>
 
                         <div class="acct-field">
-                            <label for="password">New Password</label>
+                            <label for="email">Email</label>
+                            <div class="acct-input-wrap">
+                                <span class="acct-input-icon">✉️</span>
+                                <input
+                                    type="email"
+                                    id="email"
+                                    name="email"
+                                    required
+                                    placeholder="you@example.com"
+                                    value="<?= htmlspecialchars($_POST['email'] ?? ''); ?>"
+                                >
+                            </div>
+                        </div>
+
+                        <div class="acct-field">
+                            <label for="phone">Phone (optional)</label>
+                            <div class="acct-input-wrap">
+                                <span class="acct-input-icon">📞</span>
+                                <input
+                                    type="tel"
+                                    id="phone"
+                                    name="phone"
+                                    placeholder="+1 (473) 000-0000"
+                                    value="<?= htmlspecialchars($_POST['phone'] ?? ''); ?>"
+                                >
+                            </div>
+                        </div>
+
+                        <div class="acct-field">
+                            <label for="password">Password</label>
                             <div class="acct-input-wrap has-toggle">
                                 <span class="acct-input-icon">🔒</span>
                                 <input
@@ -173,7 +218,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                     name="password"
                                     required
                                     minlength="8"
-                                    autofocus
                                     placeholder="At least 8 characters"
                                 >
                                 <button type="button"
@@ -193,7 +237,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         </div>
 
                         <div class="acct-field">
-                            <label for="confirm">Confirm New Password</label>
+                            <label for="confirm">Confirm Password</label>
                             <div class="acct-input-wrap has-toggle">
                                 <span class="acct-input-icon">🔒</span>
                                 <input
@@ -220,16 +264,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             </div>
                         </div>
 
+                        <div class="acct-field acct-terms-field">
+                            <label class="acct-terms-label">
+                                <input type="checkbox" name="agree" required>
+                                <span>
+                                    I agree to the
+                                    <a href="/fetecation/terms.php" target="_blank">Terms of Service</a>
+                                    and
+                                    <a href="/fetecation/privacy.php" target="_blank">Privacy Policy</a>.
+                                </span>
+                            </label>
+                        </div>
+
                         <button type="submit" class="acct-button">
-                            <span>Update Password</span>
+                            <span>Create Account</span>
                             <span class="acct-button-arrow">→</span>
                         </button>
 
                     </form>
 
+                    <div class="acct-switch-account">
+                        <p>Already have an account?</p>
+                        <a href="/fetecation/auth/login.php" class="acct-button-outline">
+                            Sign In to your account
+                        </a>
+                    </div>
+
                 <?php endif; ?>
 
-                <p class="acct-panel-footer">
+                <p class="acct-panel-footer" style="margin-top:24px;">
                     <a href="/fetecation/">← Back to FeteCation.com</a>
                 </p>
 

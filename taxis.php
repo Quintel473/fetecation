@@ -1,6 +1,7 @@
 <?php
 $pageTitle = "Taxi Services";
 
+require_once __DIR__ . "/data/tours-data.php";
 require_once __DIR__ . "/includes/header.php";
 ?>
 
@@ -27,7 +28,7 @@ require_once __DIR__ . "/includes/header.php";
         <div class="service-grid">
 
             <!-- Card 1 -->
-            <a href="/fetecation/booking.php?tour=taxi" class="service-card taxi-dropdown-card">
+            <a href="/fetecation/booking/booking.php?tour=taxi" class="service-card taxi-dropdown-card">
                 <div class="service-icon">✈️</div>
                 <h3>Airport Transfers</h3>
                 <p>Stress-free pickups and drop-offs.</p>
@@ -41,7 +42,7 @@ require_once __DIR__ . "/includes/header.php";
             </a>
 
             <!-- Card 2 -->
-            <a href="/fetecation/booking.php?tour=taxi" class="service-card taxi-dropdown-card">
+            <a href="/fetecation/booking/booking.php?tour=taxi" class="service-card taxi-dropdown-card">
                 <div class="service-icon">🏖️</div>
                 <h3>Island & Beach Hopping</h3>
                 <p>Your private ride around the island.</p>
@@ -55,7 +56,7 @@ require_once __DIR__ . "/includes/header.php";
             </a>
 
             <!-- Card 3 -->
-            <a href="/fetecation/booking.php?tour=taxi" class="service-card taxi-dropdown-card">
+            <a href="/fetecation/booking/booking.php?tour=taxi" class="service-card taxi-dropdown-card">
                 <div class="service-icon">🍹</div>
                 <h3>Nightlife & Events</h3>
                 <p>Safe, reliable rides after dark.</p>
@@ -69,7 +70,7 @@ require_once __DIR__ . "/includes/header.php";
             </a>
 
             <!-- Card 4 -->
-            <a href="/fetecation/booking.php?tour=taxi" class="service-card taxi-dropdown-card">
+            <a href="/fetecation/booking/booking.php?tour=taxi" class="service-card taxi-dropdown-card">
                 <div class="service-icon">🛳️</div>
                 <h3>Cruise Port Pickups</h3>
                 <p>Punctual transfers for your stay.</p>
@@ -83,7 +84,7 @@ require_once __DIR__ . "/includes/header.php";
             </a>
 
             <!-- Card 5 -->
-            <a href="/fetecation/booking.php?tour=taxi" class="service-card taxi-dropdown-card">
+            <a href="/fetecation/booking/booking.php?tour=taxi" class="service-card taxi-dropdown-card">
                 <div class="service-icon">🚐</div>
                 <h3>Hourly & Full-Day Hire</h3>
                 <p>A driver on standby, all day.</p>
@@ -97,7 +98,7 @@ require_once __DIR__ . "/includes/header.php";
             </a>
 
             <!-- Card 6 -->
-            <a href="/fetecation/booking.php?tour=taxi" class="service-card taxi-dropdown-card">
+            <a href="/fetecation/booking/booking.php?tour=taxi" class="service-card taxi-dropdown-card">
                 <div class="service-icon">💼</div>
                 <h3>Corporate & Business</h3>
                 <p>Professional transport for work.</p>

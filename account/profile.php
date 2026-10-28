@@ -4,7 +4,7 @@ $pageTitle = "Profile Settings";
 require_once __DIR__ . '/../includes/customer-auth.php';
 
 if (!customer_is_logged_in()) {
-    header('Location: /fetecation/login.php');
+    header('Location: /fetecation/auth/login.php');
     exit;
 }
 
@@ -12,7 +12,7 @@ $customer = customer_current();
 
 if (!$customer) {
     customer_logout();
-    header('Location: /fetecation/login.php');
+    header('Location: /fetecation/auth/login.php');
     exit;
 }
 
@@ -125,7 +125,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if ($result['ok']) {
             customer_logout();
-            header('Location: /fetecation/login.php?deleted=1');
+            header('Location: /fetecation/auth/login.php?deleted=1');
             exit;
         } else {
             $deleteError = $result['error'];
@@ -198,7 +198,7 @@ $avatarUrl = customer_avatar_url($customer);
                         <span>⚙️</span> Profile Settings
                     </a>
 
-                    <a href="/fetecation/booking.php">
+                    <a href="/fetecation/booking/booking.php">
                         <span>➕</span> New Booking
                     </a>
 

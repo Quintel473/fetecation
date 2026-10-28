@@ -3,8 +3,8 @@
 $pageTitle = "Home";
 
 require_once __DIR__ . "/includes/header.php";
-require_once __DIR__ . "/tours-data.php";
-require_once __DIR__ . "/testimonials-data.php";
+require_once __DIR__ . "/data/tours-data.php";
+require_once __DIR__ . "/data/testimonials-data.php";
 
 $tours = fete_all_tours();
 
@@ -51,7 +51,7 @@ $featuredTours = array_slice($tours, 0, 3, true);
 
         <div class="hero-actions">
 
-            <a href="/fetecation/booking.php" class="hero-primary-button">
+            <a href="/fetecation/booking/booking.php" class="hero-primary-button">
                 Book a Ride
             </a>
 
@@ -442,7 +442,7 @@ $featuredTours = array_slice($tours, 0, 3, true);
             book online in under a minute.
         </p>
 
-        <a href="/fetecation/booking.php" class="hero-primary-button">
+        <a href="/fetecation/booking/booking.php" class="hero-primary-button">
             Book With FeteCation
         </a>
 

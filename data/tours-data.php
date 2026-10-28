@@ -4,7 +4,7 @@
  * Falls back to static arrays only if the DB fails.
  */
 
-require_once __DIR__ . '/includes/database.php';
+require_once __DIR__ . '/../includes/database.php';
 
 $TOURS = [];
 $PARTIES = [];
@@ -32,6 +32,8 @@ try {
             'included'         => json_decode($row['included'], true) ?: [],
             'bring'            => json_decode($row['bring'], true) ?: [],
             'itinerary'        => json_decode($row['itinerary'], true) ?: [],
+            'how_it_works'     => isset($row['how_it_works']) ? (json_decode($row['how_it_works'], true) ?: []) : [],
+            'ideas'            => isset($row['ideas'])        ? (json_decode($row['ideas'], true) ?: [])        : [],
         ];
 
         // Route to the correct array based on type

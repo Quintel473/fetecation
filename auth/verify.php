@@ -1,7 +1,9 @@
 <?php
 $pageTitle = "Confirm Email";
 
-require_once __DIR__ . '/includes/customer-auth.php';
+require_once __DIR__ . '/../includes/customer-auth.php';
+require_once __DIR__ . '/../includes/header.php';
+require_once __DIR__ . '/../includes/footer.php';
 
 $token   = trim($_GET['token'] ?? '');
 $success = false;

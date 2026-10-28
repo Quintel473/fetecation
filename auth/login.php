@@ -1,7 +1,7 @@
 <?php
 $pageTitle = "Sign In";
 
-require_once __DIR__ . '/includes/customer-auth.php';
+require_once __DIR__ . '/../includes/customer-auth.php';
 
 if (customer_is_logged_in()) {
     header('Location: /fetecation/account/index.php');
@@ -114,7 +114,7 @@ if (isset($_GET['deleted']))    $notice = 'Your account has been deleted. We\'re
                     </div>
                 <?php endif; ?>
 
-                <form method="post" action="/fetecation/login.php" autocomplete="off">
+                <form method="post" action="/fetecation/auth/login.php" autocomplete="off">
 
                     <div class="acct-field">
                         <label for="email">Email</label>
@@ -176,7 +176,7 @@ if (isset($_GET['deleted']))    $notice = 'Your account has been deleted. We\'re
                 <p class="acct-panel-footer" style="margin-top:22px;">
                     <a href="/fetecation/forgot-password.php">Forgot password?</a>
                     &nbsp;·&nbsp;
-                    <a href="/fetecation/register.php">Create an account</a>
+                    <a href="/fetecation/auth/register.php">Create an account</a>
                 </p>
 
                 <p class="acct-panel-footer">

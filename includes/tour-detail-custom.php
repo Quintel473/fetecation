@@ -9,7 +9,7 @@
  *   require __DIR__ . '/../includes/tour-detail-custom.php';
  */
 
-require_once __DIR__ . '/../tours-data.php';
+require_once __DIR__ . '/../data/tours-data.php';
 
 if (!isset($tourSlug) || !$tour = fete_tour($tourSlug)) {
     header('HTTP/1.0 404 Not Found');
@@ -148,7 +148,7 @@ require __DIR__ . '/header.php';
                     <?= htmlspecialchars($tour['price']); ?>
                 </p>
 
-                <a href="/fetecation/booking.php?tour=<?= urlencode($tourSlug); ?>"
+                <a href="/fetecation/booking/booking.php?tour=<?= urlencode($tourSlug); ?>"
                    class="tour-booking-button">
                     Request a Custom Quote
                 </a>
@@ -238,7 +238,7 @@ require __DIR__ . '/header.php';
 
         <h2>Let's Build Your Perfect Day</h2>
 
-        <a href="/fetecation/booking.php?tour=<?= urlencode($tourSlug); ?>"
+        <a href="/fetecation/booking/booking.php?tour=<?= urlencode($tourSlug); ?>"
            class="primary-button">
             Request a Custom Quote
         </a>

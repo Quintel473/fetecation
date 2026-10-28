@@ -300,7 +300,7 @@ function customer_send_verification_email(array $customer): bool
         $mail = fete_mailer();
         $mail->addAddress($customer['email'], $customer['name']);
 
-        $link = 'http://localhost/fetecation/verify.php?token=' . urlencode($customer['token']);
+        $link = 'http://localhost/fetecation/auth/verify.php?token=' . urlencode($customer['token']);
 
         $mail->Subject = 'Welcome to FeteCation — confirm your email';
 
@@ -330,7 +330,7 @@ function customer_send_reset_email(array $customer): bool
         $mail = fete_mailer();
         $mail->addAddress($customer['email'], $customer['name']);
 
-        $link = 'http://localhost/fetecation/reset-password.php?token=' . urlencode($customer['token']);
+        $link = 'http://localhost/fetecation/auth/reset-password.php?token=' . urlencode($customer['token']);
 
         $mail->Subject = 'Reset your FeteCation password';
 

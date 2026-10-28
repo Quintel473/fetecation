@@ -1,7 +1,7 @@
 <?php
 $pageTitle = "Parties & Events";
 
-require_once __DIR__ . "/tours-data.php";
+require_once __DIR__ . "/data/tours-data.php";
 require_once __DIR__ . "/includes/header.php";
 
 $parties = fete_all_parties();
@@ -28,7 +28,8 @@ $parties = fete_all_parties();
         <div class="tour-grid">
             <?php foreach ($parties as $slug => $t): ?>
                 
-                <a href="/fetecation/party-booking.php?tour=<?= htmlspecialchars($slug); ?>" class="tour-card">
+                <!-- FIXED: Points to the booking folder now -->
+                <a href="/fetecation/booking/party-booking.php?tour=<?= htmlspecialchars($slug); ?>" class="tour-card">
                     
                     <!-- The Flyer Image -->
                     <div class="tour-image" style="background-image: url('<?= htmlspecialchars($t['image']); ?>'); background-size:cover; background-position:center; height:380px;">

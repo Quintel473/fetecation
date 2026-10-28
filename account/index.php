@@ -6,7 +6,7 @@ require_once __DIR__ . '/../includes/database.php';
 
 /* Must be logged in */
 if (!customer_is_logged_in()) {
-    header('Location: /fetecation/login.php');
+    header('Location: /fetecation/auth/login.php');
     exit;
 }
 
@@ -14,7 +14,7 @@ $customer = customer_current();
 
 if (!$customer) {
     customer_logout();
-    header('Location: /fetecation/login.php');
+    header('Location: /fetecation/auth/login.php');
     exit;
 }
 
@@ -123,7 +123,7 @@ $sideAvatar = customer_avatar_url($customer);
                         <span>⚙️</span> Profile Settings
                     </a>
 
-                    <a href="/fetecation/booking.php">
+                    <a href="/fetecation/booking/booking.php">
                         <span>➕</span> New Booking
                     </a>
 
@@ -165,7 +165,7 @@ $sideAvatar = customer_avatar_url($customer);
 
                     <div class="account-block-header">
                         <h2>Upcoming Trips</h2>
-                        <a href="/fetecation/booking.php" class="acct-link">
+                        <a href="/fetecation/booking/booking.php" class="acct-link">
                             Book a new trip →
                         </a>
                     </div>
@@ -174,7 +174,7 @@ $sideAvatar = customer_avatar_url($customer);
 
                         <div class="account-empty">
                             <p>No upcoming trips yet.</p>
-                            <a href="/fetecation/booking.php" class="primary-button" style="display:inline-block;margin-top:14px;">
+                            <a href="/fetecation/booking/booking.php" class="primary-button" style="display:inline-block;margin-top:14px;">
                                 Book a Ride
                             </a>
                         </div>

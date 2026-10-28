@@ -1,11 +1,9 @@
 <?php
-$pageTitle = "Payment Received";
+$pageTitle = "Payment Cancelled";
 
-require_once __DIR__ . '/includes/database.php';
-require_once __DIR__ . '/includes/paypal.php';
+require_once __DIR__ . '/../includes/database.php';
 
-$ref     = $_GET['ref']   ?? '';
-$orderId = $_GET['token'] ?? '';
+$ref = $_GET['ref'] ?? '';
 
 $booking = null;
 if ($ref !== '') {
@@ -16,43 +14,14 @@ if ($ref !== '') {
     } catch (Throwable $e) {}
 }
 
-/* Capture the payment */
-$captureOk = false;
-if ($orderId !== '') {
-    $capture   = paypal_capture_order($orderId);
-    $captureOk = !empty($capture['ok']);
-}
-
-/* Mark booking as paid */
-if ($captureOk && $booking) {
-    try {
-        $upd = $pdo->prepare(
-            'UPDATE bookings
-             SET Status = "Confirmed"
-             WHERE BookingID = ?'
-        );
-        $upd->execute([$booking['BookingID']]);
-    } catch (Throwable $e) {
-        error_log('booking status update failed: ' . $e->getMessage());
-    }
-}
-
-/* Log it */
-paypal_log_payment([
-    'reference'  => $ref,
-    'order_id'   => $orderId,
-    'status'     => $captureOk ? 'captured' : 'capture_failed',
-    'created_at' => date('Y-m-d H:i:s'),
-]);
-
-require_once __DIR__ . '/includes/header.php';
+require_once __DIR__ . '/../includes/header.php';
 ?>
 
 <section class="page-hero">
     <div class="container page-hero-content">
         <p class="section-label">PAYMENT</p>
-        <h1>Thank you<?= $booking ? ', ' . htmlspecialchars($booking['Name']) : ''; ?>!</h1>
-        <p>Your payment has been received.</p>
+        <h1>Payment Cancelled</h1>
+        <p>No charge was made — your booking is still safe.</p>
     </div>
 </section>
 
@@ -61,13 +30,14 @@ require_once __DIR__ . '/includes/header.php';
     <div class="container">
         <div class="success-card">
 
-            <div class="success-icon">✓</div>
+            <div class="success-icon" style="background:#c94f2c;">!</div>
 
-            <h2>Payment confirmed</h2>
+            <h2>No payment was taken</h2>
 
             <p class="success-subtitle">
-                We've received your payment and your booking is fully secured.
-                You'll get a receipt by email shortly.
+                It looks like you cancelled the payment. That's totally fine —
+                your booking request has been saved and our team will be in touch.
+                You can also try the payment again whenever you're ready.
             </p>
 
             <?php if ($booking): ?>
@@ -98,7 +68,15 @@ require_once __DIR__ . '/includes/header.php';
             <?php endif; ?>
 
             <div class="success-actions">
-                <a href="/fetecation/" class="primary-button">Back to Home</a>
+                <?php if ($ref !== ''): ?>
+                    <a href="/fetecation/booking/payment-start.php?ref=<?= urlencode($ref); ?>"
+                       class="primary-button">
+                        Try Payment Again
+                    </a>
+                <?php else: ?>
+                    <a href="/fetecation/" class="primary-button">Back to Home</a>
+                <?php endif; ?>
+
                 <a href="https://wa.me/14734597407?text=Hi%20FeteCation!"
                    class="secondary-button"
                    target="_blank"
@@ -107,8 +85,14 @@ require_once __DIR__ . '/includes/header.php';
                 </a>
             </div>
 
+            <p style="margin-top:24px; font-size:13px; color:#888;">
+                <?php if ($ref !== ''): ?>
+                    Or <a href="/fetecation/" style="color:#c94f2c;">return to the homepage</a>.
+                <?php endif; ?>
+            </p>
+
         </div>
     </div>
 </section>
 
-<?php require_once __DIR__ . '/includes/footer.php'; ?>
+<?php require_once __DIR__ . '/../includes/footer.php'; ?>

@@ -3,7 +3,7 @@
 $pageTitle = "Tours";
 
 require_once __DIR__ . "/includes/header.php";
-require_once __DIR__ . "/tours-data.php";
+require_once __DIR__ . "/data/tours-data.php";
 
 $tours = fete_all_tours();
 

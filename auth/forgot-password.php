@@ -1,7 +1,7 @@
 <?php
 $pageTitle = "Forgot Password";
 
-require_once __DIR__ . '/includes/customer-auth.php';
+require_once __DIR__ . '/../includes/customer-auth.php';
 
 if (customer_is_logged_in()) {
     header('Location: /fetecation/account/index.php');
@@ -123,7 +123,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         </div>
                     <?php endif; ?>
 
-                    <form method="post" action="/fetecation/forgot-password.php" autocomplete="off">
+                    <form method="post" action="/fetecation/auth/forgot-password.php" autocomplete="off">
 
                         <div class="acct-field">
                             <label for="email">Email</label>
