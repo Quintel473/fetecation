@@ -4528,3 +4528,27 @@ img {
     box-shadow: 0 0 0 3px rgba(201, 79, 44, 0.25);
     transform: translateY(-1px);
 }
+
+/* =========================================
+   FIX FOR PARTY CARD BUTTON ALIGNMENT
+   ========================================= */
+
+/* 1. Make the link act as a flex column so children can stretch */
+a.tour-card {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+/* 2. Make the content area take up all remaining space */
+.tour-content {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+/* 3. Push the footer (and the button inside it) to the absolute bottom */
+.party-card-footer {
+    margin-top: auto;
+    padding-top: 20px;
+}

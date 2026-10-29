@@ -48,9 +48,13 @@ $parties = fete_all_parties();
                             <span>💵 <?= htmlspecialchars($t['price']); ?></span>
                         </div>
 
-                        <span class="tour-button" style="width:100%; text-align:center; display:block; box-sizing:border-box;">
-                            Book This Party
-                        </span>
+                        <!-- NEW WRAPPER: Pushes the button to the bottom -->
+                        <div class="party-card-footer">
+                            <span class="tour-button" style="width:100%; text-align:center; display:block; box-sizing:border-box;">
+                                Book This Party
+                            </span>
+                        </div>
+
                     </div>
 
                 </a>
