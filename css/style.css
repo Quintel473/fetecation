@@ -732,6 +732,11 @@ img {
     border-radius: 12px;
     overflow: hidden;
     transition: var(--transition);
+    
+    /* ADDED THESE 3 LINES */
+    display: flex;
+    flex-direction: column;
+    height: 100%;
 }
 
 .tour-card:hover {
@@ -762,6 +767,11 @@ img {
 
 .tour-content {
     padding: 30px;
+    
+    /* ADDED THESE 3 LINES */
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
 }
 
 .tour-tag {
@@ -799,6 +809,10 @@ img {
     padding: 11px 20px;
     border-radius: 6px;
     font-weight: 700;
+    text-align: center;
+    
+    /* ADDED THIS LINE TO PUSH THE BUTTON TO THE BOTTOM */
+    margin-top: auto;
 }
 
 .tour-button:hover {
