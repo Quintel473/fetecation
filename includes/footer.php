@@ -40,7 +40,6 @@
                 Book your taxi or tour with FeteCation.
             </p>
 
-            <!-- FIXED: Updated to new booking folder -->
             <a href="/fetecation/booking/booking.php" class="footer-button">
                 Book Now
             </a>
@@ -99,6 +98,14 @@
 </footer>
 
 <script src="/fetecation/js/script.js"></script>
+
+<!-- ============ MOBILE STICKY CTA ============ -->
+<div class="mobile-sticky-cta">
+    <a href="/fetecation/booking/booking.php" class="primary-button" style="display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%;">
+        Book Now 
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+    </a>
+</div>
 
 <!-- ============ FLOATING WHATSAPP BUTTON ============ -->
 <a href="https://wa.me/14734597407?text=Hi%20FeteCation!%20I'd%20like%20to%20book%20a%20taxi%20or%20tour."

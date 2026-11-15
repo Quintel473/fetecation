@@ -28,7 +28,6 @@ $parties = fete_all_parties();
         <div class="tour-grid">
             <?php foreach ($parties as $slug => $t): ?>
                 
-                <!-- FIXED: Points to the booking folder now -->
                 <a href="/fetecation/booking/party-booking.php?tour=<?= htmlspecialchars($slug); ?>" class="tour-card">
                     
                     <!-- The Flyer Image -->
@@ -43,12 +42,23 @@ $parties = fete_all_parties();
                         <p><?= htmlspecialchars($t['tagline']); ?></p>
                         
                         <div class="tour-details" style="margin-bottom:20px;">
-                            <span>🕐 <?= htmlspecialchars($t['duration']); ?></span>
-                            <span>👥 <?= htmlspecialchars($t['group']); ?></span>
-                            <span>💵 <?= htmlspecialchars($t['price']); ?></span>
+                            <!-- Clock Icon -->
+                            <span style="display:flex;align-items:center;gap:6px;">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                                <?= htmlspecialchars($t['duration']); ?>
+                            </span>
+                            <!-- Users Icon -->
+                            <span style="display:flex;align-items:center;gap:6px;">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                                <?= htmlspecialchars($t['group']); ?>
+                            </span>
+                            <!-- Dollar Icon -->
+                            <span style="display:flex;align-items:center;gap:6px;">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+                                <?= htmlspecialchars($t['price']); ?>
+                            </span>
                         </div>
 
-                        <!-- NEW WRAPPER: Pushes the button to the bottom -->
                         <div class="party-card-footer">
                             <span class="tour-button" style="width:100%; text-align:center; display:block; box-sizing:border-box;">
                                 Book This Party

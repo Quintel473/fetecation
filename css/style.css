@@ -4566,3 +4566,280 @@ a.tour-card {
     margin-top: auto;
     padding-top: 20px;
 }
+
+/* =========================================================
+   STEP 1: HIGH-IMPACT VISUAL POLISH
+   ========================================================= */
+
+/* 1. Smooth Scrolling */
+html {
+    scroll-behavior: smooth;
+}
+
+/* 2. Card Image Zoom on Hover */
+.tour-image,
+.featured-tour-image,
+.home-service-card .service-card-image {
+    transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.tour-card:hover .tour-image,
+.featured-tour-card:hover .featured-tour-image,
+.home-service-card:hover .service-card-image {
+    transform: scale(1.08);
+}
+
+/* 3. Gradient Overlays for Tour Cards 
+   (Adds a soft dark fade at the bottom of the image so white text pops) */
+.tour-image,
+.featured-tour-image {
+    position: relative;
+}
+
+.tour-image::after,
+.featured-tour-image::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        to bottom,
+        rgba(0,0,0,0) 50%,
+        rgba(0,0,0,0.4) 100%
+    );
+    pointer-events: none; /* So you can still click the card */
+}
+
+/* 4. Button Hover Animations (Arrow Slide) */
+.tour-button,
+.primary-button,
+.hero-primary-button {
+    position: relative;
+    overflow: hidden;
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+}
+
+/* Add an invisible arrow to the right */
+.tour-button::after,
+.primary-button::after {
+    content: "→";
+    position: absolute;
+    right: 15px;
+    opacity: 0;
+    transform: translateX(-10px);
+    transition: all 0.3s ease;
+}
+
+/* On hover, slide the text slightly left and reveal the arrow */
+.tour-button:hover,
+.primary-button:hover {
+    padding-right: 40px; /* Make room for arrow */
+    box-shadow: 0 8px 20px rgba(233, 120, 63, 0.25);
+}
+
+.tour-button:hover::after,
+.primary-button:hover::after {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+/* 5. Trust Badges (For Forms & Checkouts) */
+.trust-badges {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-top: 15px;
+    font-size: 12px;
+    color: var(--fete-gray);
+    flex-wrap: wrap;
+}
+
+.trust-badges span {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.trust-badges svg {
+    width: 16px;
+    height: 16px;
+    fill: var(--fete-orange-dark);
+}
+
+/* 6. Sticky Mobile "Book Now" Bar */
+/* =========================================================
+   STEP 5: MOBILE STICKY CTA & WHATSAPP FIX
+   ========================================================= */
+
+.mobile-sticky-cta {
+    display: none; /* Hidden on desktop */
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: var(--fete-white);
+    box-shadow: 0 -4px 15px rgba(0,0,0,0.1);
+    padding: 12px 20px;
+    z-index: 9998; /* Just below WhatsApp */
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid var(--fete-border);
+}
+
+.mobile-sticky-cta .primary-button {
+    width: 100%;
+    text-align: center;
+    padding: 14px;
+    border-radius: 6px;
+    font-size: 16px;
+}
+
+/* Show the sticky bar only on phones/tablets */
+@media (max-width: 850px) {
+    .mobile-sticky-cta {
+        display: flex;
+    }
+    
+    /* Push the page content up so the bar doesn't cover the footer */
+    body {
+        padding-bottom: 80px;
+    }
+
+    /* Move the WhatsApp button up so it sits ABOVE the sticky bar */
+    .whatsapp-float {
+        bottom: 85px !important; 
+        right: 16px;
+    }
+}
+
+/* =========================================================
+   STEP 2: HOW IT WORKS SECTION
+   ========================================================= */
+
+.how-it-works-section {
+    padding: 100px 0;
+    background: var(--fete-white);
+    position: relative;
+}
+
+.steps-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+    margin-top: 50px;
+    position: relative;
+}
+
+/* Connecting line behind the cards (Desktop only) */
+.steps-grid::before {
+    content: "";
+    position: absolute;
+    top: 40px; /* Aligns with the center of the circles */
+    left: 15%;
+    right: 15%;
+    height: 2px;
+    background: var(--fete-border);
+    z-index: 0;
+}
+
+.step-card {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    padding: 0 20px;
+}
+
+/* The numbered circle */
+.step-number {
+    width: 80px;
+    height: 80px;
+    background: var(--fete-light);
+    border: 3px solid var(--fete-orange);
+    color: var(--fete-orange);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    font-weight: 900;
+    margin: 0 auto 24px;
+    transition: var(--transition);
+    box-shadow: 0 4px 10px rgba(233, 120, 63, 0.15);
+}
+
+/* Hover effect for the circle */
+.step-card:hover .step-number {
+    background: var(--fete-orange);
+    color: var(--fete-white);
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(233, 120, 63, 0.3);
+}
+
+.step-card h3 {
+    font-size: 22px;
+    margin-bottom: 12px;
+    color: var(--fete-dark);
+}
+
+.step-card p {
+    color: var(--fete-gray);
+    font-size: 15px;
+    line-height: 1.6;
+}
+
+/* Responsive Design */
+@media (max-width: 850px) {
+    .steps-grid {
+        grid-template-columns: 1fr;
+        gap: 40px;
+    }
+
+    /* Hide the connecting line on mobile */
+    .steps-grid::before {
+        display: none;
+    }
+
+    .step-card {
+        padding: 0;
+    }
+}
+
+/* =========================================================
+   SVG ICON ALIGNMENT & COLOR
+   ========================================================= */
+.tour-stat-icon {
+    color: var(--fete-orange); /* Makes the icons match your brand */
+    margin-bottom: 6px;
+    width: 22px;
+    height: 22px;
+}
+
+.tour-details span svg {
+    color: var(--fete-orange-dark); /* Gives the details icons a slightly darker pop */
+}
+
+/* =========================================================
+   BUTTON LOADING SPINNER
+   ========================================================= */
+.btn-loader {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top-color: #ffffff;
+    animation: spin 0.8s linear infinite;
+    margin-right: 6px;
+    vertical-align: middle;
+}
+
+/* If the button is white/light, we need a dark spinner */
+.primary-button .btn-loader,
+.tour-button .btn-loader,
+.hero-primary-button .btn-loader {
+    border-color: rgba(255, 255, 255, 0.3);
+    border-top-color: #ffffff;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}

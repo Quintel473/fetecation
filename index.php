@@ -196,6 +196,43 @@ $featuredTours = array_slice($tours, 0, 3, true);
 
 </section>
 
+<!-- ============ HOW IT WORKS ============ -->
+<section class="how-it-works-section">
+    <div class="container">
+        
+        <div class="section-heading centered-heading">
+            <p class="section-label">SIMPLE & EASY</p>
+            <h2>How It Works</h2>
+            <p>Book your next Caribbean adventure in three easy steps.</p>
+        </div>
+
+        <div class="steps-grid">
+            
+            <!-- Step 1 -->
+            <div class="step-card">
+                <div class="step-number">1</div>
+                <h3>Choose Your Experience</h3>
+                <p>Browse our curated island tours or book a private taxi for airport transfers and daily rides.</p>
+            </div>
+
+            <!-- Step 2 -->
+            <div class="step-card">
+                <div class="step-number">2</div>
+                <h3>Secure Your Date</h3>
+                <p>Fill out our quick booking form. Pay a secure deposit online or choose to pay on the day.</p>
+            </div>
+
+            <!-- Step 3 -->
+            <div class="step-card">
+                <div class="step-number">3</div>
+                <h3>Enjoy The Ride</h3>
+                <p>We'll confirm your booking within 24 hours. Our local driver will meet you right on time.</p>
+            </div>
+
+        </div>
+    </div>
+</section>
+
 
 <!-- ============ FEATURED TOURS ============ -->
 <section class="featured-tours">
