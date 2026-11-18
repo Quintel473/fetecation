@@ -277,8 +277,8 @@ $featuredTours = array_slice($tours, 0, 3, true);
 
                         <p><?= htmlspecialchars($tour['tagline']); ?></p>
 
-                        <span class="service-link" style="color:var(--fete-orange-dark);font-weight:800;">
-                            View Tour →
+                        <span class="service-link" style="color:var(--fete-orange-dark);font-weight:800; display:inline-flex; align-items:center; gap:6px;">
+                            View Tour &rarr;
                         </span>
 
                     </div>

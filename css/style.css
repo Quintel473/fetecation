@@ -4843,3 +4843,159 @@ html {
 @keyframes spin {
     to { transform: rotate(360deg); }
 }
+
+/* =========================================================
+   FIX FOR FEATURED TOUR CARDS (ALIGNING BUTTONS)
+   ========================================================= */
+
+.featured-tour-card {
+    display: flex;
+    flex-direction: column;
+    height: 100%; /* Ensures all cards in the grid stretch to the same height */
+}
+
+.featured-tour-content {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1; /* Makes the content area fill the remaining space */
+}
+
+/* Target the specific button inside the featured tour card */
+.featured-tour-content .service-link {
+    margin-top: auto; /* Pushes the button to the absolute bottom of the card */
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+/* Ensure the grid itself is set up to stretch items */
+.featured-tour-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px; /* Adjust gap if needed */
+    align-items: stretch; /* Forces all grid items to match the height of the tallest one */
+}
+
+/* =========================================================
+   HOME PAGE DARK MODE OVERRIDES
+   ========================================================= */
+
+/* 1. Fix the main body background if it's not already dark */
+[data-theme="dark"] body {
+    background-color: #0f172a; /* Dark slate */
+    color: #e2e8f0;
+}
+
+/* 2. Fix Intro Section */
+[data-theme="dark"] .intro-section {
+    background-color: #1e293b; /* Slightly lighter slate for contrast */
+    color: #e2e8f0;
+}
+[data-theme="dark"] .intro-content h2,
+[data-theme="dark"] .intro-content p {
+    color: #e2e8f0;
+}
+[data-theme="dark"] .intro-content h2 span {
+    color: var(--fete-orange-dark, #ea580c); /* Keeps your orange accent */
+}
+
+/* 3. Fix Services Section */
+[data-theme="dark"] .home-services {
+    background-color: #0f172a;
+}
+[data-theme="dark"] .home-service-card {
+    background-color: #1e293b;
+    border-color: #334155;
+}
+[data-theme="dark"] .home-service-content h3 {
+    color: #f1f5f9;
+}
+[data-theme="dark"] .home-service-content p {
+    color: #94a3b8;
+}
+
+/* 4. Fix How It Works Section */
+[data-theme="dark"] .how-it-works-section {
+    background-color: #0f172a; /* Darker background for the whole section */
+}
+
+[data-theme="dark"] .step-card {
+    background-color: #1e293b; /* Lighter card background to stand out */
+    border: 1px solid #334155;
+    border-radius: 12px; /* Make sure it has rounded corners */
+    padding: 30px 20px;
+}
+
+[data-theme="dark"] .step-card h3 {
+    color: #f8fafc; /* Bright white for the title */
+}
+
+[data-theme="dark"] .step-card p {
+    color: #cbd5e1; /* Light grey for the paragraph text so it's readable */
+}
+
+/* Fix the number circle */
+[data-theme="dark"] .step-number {
+    background-color: #334155; /* Lighter circle background */
+    color: #f8fafc; /* White number */
+    border: 2px solid var(--fete-orange-dark, #ea580c); /* Keep the orange ring */
+}
+
+/* 5. Fix Featured Tours */
+[data-theme="dark"] .featured-tours {
+    background-color: #0f172a;
+}
+[data-theme="dark"] .featured-tour-card {
+    background-color: #1e293b;
+    border-color: #334155;
+}
+[data-theme="dark"] .featured-tour-content h3 {
+    color: #f1f5f9;
+}
+[data-theme="dark"] .featured-tour-content p {
+    color: #94a3b8;
+}
+[data-theme="dark"] .featured-tour-content .service-link {
+    color: #fb923c !important; /* Brighter orange for dark mode readability */
+}
+
+/* 6. Fix Why Section */
+[data-theme="dark"] .why-section {
+    background-color: #1e293b;
+}
+[data-theme="dark"] .why-content h2,
+[data-theme="dark"] .why-content p {
+    color: #e2e8f0;
+}
+[data-theme="dark"] .why-item h3 {
+    color: #f1f5f9;
+}
+[data-theme="dark"] .why-item p {
+    color: #94a3b8;
+}
+[data-theme="dark"] .why-icon {
+    color: #4ade80; /* Brighter green for checkmarks */
+}
+
+/* 7. Fix Testimonials */
+[data-theme="dark"] .testimonials-section {
+    background-color: #0f172a;
+}
+[data-theme="dark"] .testimonial-card {
+    background-color: #1e293b;
+    border-color: #334155;
+}
+[data-theme="dark"] .testimonial-text {
+    color: #e2e8f0;
+}
+[data-theme="dark"] .testimonial-author strong {
+    color: #f1f5f9;
+}
+[data-theme="dark"] .testimonial-location {
+    color: #94a3b8;
+}
+
+/* 8. Fix Booking CTA */
+[data-theme="dark"] .home-booking-cta {
+    background-color: #1e293b;
+}
